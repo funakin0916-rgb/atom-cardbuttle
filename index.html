@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <title>げんしカードバトル 🧪⚔️</title>
+  <style>
+    body{margin:0;background:#080820;overflow:hidden}
+    #root{width:100%;min-height:100dvh}
+    #loading{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100dvh;color:#5cf;font-family:'DotGothic16',monospace;gap:12px}
+    #loading .spinner{width:32px;height:32px;border:4px solid #222;border-top:4px solid #5cf;animation:spin .8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+  </style>
+  <!-- Google Fonts (pixel/dot style) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Press+Start+2P&display=swap" rel="stylesheet"/>
+  <!-- React 18 -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <!-- Babel standalone (JSX transform in browser) -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+  <div id="root">
+    <div id="loading">
+      <div class="spinner"></div>
+      <div>Loading...</div>
+    </div>
+  </div>
+  <!-- Game JSX (compiled by Babel in browser) -->
+  <script type="text/babel" data-type="module" src="atom-card-game.jsx"></script>
+  <script type="text/babel">
+    // Mount the app after JSX is loaded
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(React.createElement(window.__App));
+  </script>
+</body>
+</html>
