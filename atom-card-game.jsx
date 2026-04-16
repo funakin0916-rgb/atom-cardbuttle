@@ -15,28 +15,75 @@ const DrSprite=({size=80})=><PA size={size} palette={{'w':'#eceff1','W':'#cfd8dc
 
 /* ── 原子モンスタードット絵 ─── */
 const ATOM_PIXELS={
-H:{p:{'a':'#4cff4c','A':'#2e7d32','w':'#fff','e':'#1b5e20','b':'#c8f7c5'},r:['    aaa     ','   aaaaa    ','  aawwaaa   ','  aaewaaA   ','  aaaaaAA   ','   aaaaA    ','    AAA     ']},
-O:{p:{'a':'#ff9100','A':'#e65100','w':'#fff','e':'#bf360c','f':'#ffe0b2'},r:['    aaa     ','   aaaaa    ','  aawwaaa   ','  aaewaaA   ','  aaaaaAA   ','   aaaaA    ','    AAA     ']},
-C:{p:{'a':'#448aff','A':'#1565c0','w':'#fff','e':'#0d47a1','d':'#bbdefb'},r:['   aaaaa    ','  aaaaaaa   ','  aawwaaaa  ','  aaewaaaA  ','  aaaaaaAA  ','  aaaaaAA   ','   AAAAA    ','    AAA     ']},
-N:{p:{'a':'#d500f9','A':'#7b1fa2','w':'#fff','e':'#4a148c'},r:['    aaa     ','   aaaaa    ','  aawwaaa   ','  aaewaaA   ','  aaaaaAA   ','   aaaaA    ','    AAA     ']},
-S:{p:{'a':'#ffd600','A':'#f57f17','w':'#fff','e':'#e65100'},r:['   a   a    ','   aaaaa    ','  aawwaaa   ','  aaewaaA   ','  aaaaaAA   ','   aaaaA    ','    AAA     ']},
-Cl:{p:{'a':'#00e5ff','A':'#00838f','w':'#fff','e':'#006064','b':'#b2ebf2'},r:['  b    b    ','   aaaaa    ','  aawwaaa   ','  aaewaaA   ','  aaaaaAA   ','   aaaaA    ','    AAA     ']},
-Na:{p:{'a':'#ff1744','A':'#c62828','w':'#fff','e':'#b71c1c','f':'#f8bbd0'},r:['    aaa     ','   aaaaa    ','  aawwaaa   ','  aaewaaA   ','  aaaaaAA   ','   aaaaA    ','    AAA     ']},
-Cu:{p:{'a':'#ff6e40','A':'#e65100','w':'#fff','e':'#bf360c','y':'#ffd600'},r:['   yyyyy    ','  yaaaaay   ','  aawwaaaa  ','  aaewaaaA  ','  aaaaaaAA  ','  aaaaaAA   ','   AAAAA    ','    AAA     ']},
-Ag:{p:{'a':'#b0bec5','A':'#546e7a','w':'#fff','e':'#37474f','g':'#fdd835'},r:['    ggg     ','   aaaaa    ','  aawwaaa   ','  aaewaaA   ','  aaaaaAA   ','  aaaaAA    ','   AAAA     ','    AA      ']},
-Fe:{p:{'a':'#8d6e63','A':'#4e342e','w':'#fff','e':'#3e2723','r':'#ff1744'},r:['  rr   rr   ','  aaaaaaa   ','  aawwaaa   ','  aaewaaA   ','  aaaaaAA   ','  aaaaAA    ','  AAAAAA    ','  AA  AA    ']}
+H:{p:{'a':'#4cff4c','A':'#2e7d32','w':'#fff','e':'#1b5e20','b':'#a5d6a7','g':'#69f0ae'},r:['    aaa      ','   aaaaa     ','  aaaaaaa    ','  aawwaaa    ','  aaewaaA    ','  aaaaaAA    ','   aaapAA    ','   aaaaA     ','    AAA      ']},
+O:{p:{'a':'#ff9100','A':'#e65100','w':'#fff','e':'#bf360c','f':'#ffe0b2','y':'#ffd600'},r:['    aaa      ','   aaaaa     ','  aaaaaaa    ','  aawwaaa    ','  aaewaaA    ','  aaaaaAA    ','   aaapAA    ','   aaaaA     ','    AAA      ']},
+C:{p:{'a':'#448aff','A':'#1565c0','w':'#fff','e':'#0d47a1','d':'#bbdefb','y':'#ffd600'},r:['   yyyyyy    ','   yaaaaay   ','   aaaaaaa   ','  aaawwaaaa  ','  aaaewaaaA  ','  aaaaaaaaA  ','   aaaaaAA   ','   aAAAAA    ','    AAAA     ','    AA AA    ']},
+N:{p:{'a':'#d500f9','A':'#7b1fa2','w':'#fff','e':'#4a148c','b':'#ea80fc'},r:['   b   b     ','   bb bb     ','    aaaaa    ','   aaaaaaa   ','  aawwaaa    ','  aaewaaA    ','  aaaaaAA    ','   aaaaA     ','    AAA      ']},
+S:{p:{'a':'#ffd600','A':'#f57f17','w':'#fff','e':'#e65100','g':'#fff176'},r:['  gg    gg   ','  gg    gg   ','   aaaaaaa   ','  aaawwaaaa  ','  aaaewaaaA  ','  aaaaaaaaA  ','   aatttAA   ','    aaaaA    ','     AAA     ']},
+Cl:{p:{'a':'#00e5ff','A':'#00838f','w':'#fff','e':'#006064','b':'#80deea','t':'#e0f7fa'},r:['  tt  tt     ','  bb  bb     ','   aaaaaaa   ','  aaawwaaaa  ','  aaaewaaaA  ','  aaaaaaaaA  ','   aapaaAA   ','    aaaaA    ','     AAA     ']},
+Na:{p:{'a':'#ff1744','A':'#c62828','w':'#fff','e':'#b71c1c','f':'#ff8a80','y':'#ffd600'},r:['    yyy      ','   yaaay     ','   aaaaaaa   ','  aaawwaaaa  ','  aaaewaaaA  ','  aaaaaaaaA  ','   aaaffAA   ','    aaaaA    ','     AAA     ']},
+Cu:{p:{'a':'#ff6e40','A':'#e65100','w':'#fff','e':'#bf360c','y':'#ffd600','h':'#4e342e'},r:['   yyyyyy    ','  yaaaaaay   ','  aaaaaaa    ','  aawwaaaa   ','  aaewaaaA   ','  aaaaaaaaA  ','  aaaaaAA    ','   AAAAA     ','   AA AA     ','   hh hh     ']},
+Ag:{p:{'a':'#b0bec5','A':'#546e7a','w':'#fff','e':'#37474f','g':'#fdd835','c':'#eceff1'},r:['    ggg      ','   gaaag     ','   aaaaaaa   ','  aawwaaaa   ','  aaewaaaA   ','  aaaaaaaA   ','   aacaaAA   ','    aaaaA    ','     AAA     ','     AA      ']},
+Fe:{p:{'a':'#8d6e63','A':'#4e342e','w':'#fff','e':'#3e2723','r':'#ff1744','h':'#4e342e'},r:['  rr   rr    ','  rr   rr    ','   aaaaaaa   ','  aaawwaaaa  ','  aaaewaaaA  ','  aaaaaaaaA  ','  aaaaraAA   ','   AAAAAA    ','   AA  AA    ','   hh  hh    ']}
 };
 const AtomSprite=({s,size=40})=>{const d=ATOM_PIXELS[s];return d?<PA rows={d.r} palette={d.p} size={size}/>:<div style={{width:size,height:size,background:"#333"}}/>;};
 
-/* ── 合体モンスタードット絵 (主要なもの) ─── */
+/* ── 合体モンスタードット絵 (全27種！かっこいい版) ─── */
 const COMP_PIXELS={
-H2:{p:{'a':'#4cff4c','A':'#2e7d32','w':'#fff','e':'#1b5e20'},r:['  aa  aa    ','  aaaa aa   ',' aawaaawaa  ',' aaeaaaewaa ',' aaaaaaaaa  ','  aaaaaaa   ','   AAAAA    ']},
-H2O:{p:{'a':'#4fc3f7','A':'#0288d1','w':'#fff','e':'#01579b','f':'#039be5','h':'#e1f5fe'},r:['   f    f   ','  ff    ff  ','  f aaaaaa  ','    aaaaaaa ','   aawwaaww','   aaewaeaa','   aaaaaaaa','    aaaaaa ','     AAAA  ','    AAAAAA ','     AAAA  ']},
-CO2:{p:{'a':'#78909c','A':'#455a64','w':'#fff','e':'#263238','s':'#90a4ae','c':'#cfd8dc'},r:['    ccc     ','   caaac    ','  aaaaaaa   ',' aawwaaawwa',' aaewaaaeaa',' aaaaaaaaaa','  aaaaaaaa ','   AAAAAA  ','    AAAA   ']},
-NaCl:{p:{'a':'#ff8a65','A':'#d84315','w':'#fff','e':'#bf360c','c':'#ffe0b2','s':'#ffd54f'},r:['   sssss    ','  saaaaas   ',' aaaaaaaaa  ',' aawwaaawwa',' aaewaaaeaa',' aaaaaaaaaa','  aAAAAAAa ','  AAAAAAAA ','   AAAAAA  ','    AAAA   ']},
-NH3:{p:{'a':'#ce93d8','A':'#7b1fa2','w':'#fff','e':'#4a148c','p':'#f48fb1','d':'#e1bee7'},r:['   d   d    ','  dd   dd   ','   aaaaaa   ','  aaaaaaaa  ',' aawwaaawwa',' aaewaaaeaa',' aaaaaaaaaa','  aapaaapa ','   aaaaaa  ','    AAAA   ']},
-CH4:{p:{'a':'#ff7043','A':'#d84315','w':'#fff','e':'#bf360c','f':'#ffd600','y':'#ff9100'},r:['   ff ff    ','   fffff    ','   aaaaaa   ','  aaaaaaaa  ',' aawwaaawwa',' aaewaaaeaa',' aaaaaaaaaa','  aaaaaaaa ','   AAAAAA  ','    AAAA   ']},
-C7:{p:{'a':'#e040fb','A':'#aa00ff','w':'#fff','e':'#6a1b9a','g':'#ffd700','d':'#ce93d8','r':'#ff1744'},r:['   g r g    ','  ggrgggg   ','   aaaaaa   ','  dddddddd  ',' ddwwddwwdd ',' ddeeddeedA ',' ddddddddAA','  ddddddAA ','   dddddA  ','    AAAA   ','   AA  AA  ']}
+// ── H₂ ツインヒドロ（双頭の水スライム）──
+H2:{p:{'a':'#4cff4c','A':'#2e7d32','w':'#fff','e':'#1b5e20','b':'#a5d6a7','g':'#69f0ae'},r:['  g        g   ','  aa      aa   ',' aaaa    aaaa  ',' awwaa  aawwa  ',' aewaa  aaewa  ',' aaaaa  aaaaa  ','  aaaaaaaaaaA  ','   aaaaaaaaA   ','   AAAAAAAAA   ','    AAAAAAA    ','     AAAAA     ']},
+// ── O₂ ダブルオキシ（風の双剣士）──
+O2:{p:{'a':'#ff9100','A':'#e65100','w':'#fff','e':'#bf360c','f':'#ffcc80','y':'#ffd600'},r:['  y      y     ',' yy      yy    ','  aaaaaaaa     ',' aaaaaaaaaa    ',' aawwaaawwaa   ',' aaewaaaewaA   ',' aaaaaaaaaaaA  ','  aaaaaaaaaaA  ','   fAAAAAAAA   ','   ff AAAA ff  ','   f   AA   f  ']},
+// ── H₂O アクアドラゴン（水竜）──
+H2O:{p:{'a':'#4fc3f7','A':'#0288d1','w':'#fff','e':'#01579b','f':'#039be5','h':'#e1f5fe','c':'#80d8ff','t':'#b3e5fc'},r:['  ff          f','  ffa        ff',' ffaaa      ff ','  aaaaaaa  ff  ',' aaaaaaaaa     ',' aawwaaawwaaa  ',' aaewaaaewaAA  ',' aaaaaaaaaaaA  ','  aacaaacaaAA  ','   aatttaaA    ','    aaaaaAA    ','     AAAA  AA  ','    AAAA    AA ','   AA    AA   ','   AA    AA   ']},
+// ── HCl アシッドスネーク（酸の蛇）──
+HCl:{p:{'a':'#76ff03','A':'#33691e','w':'#fff','e':'#1b5e20','t':'#f44336','g':'#b9f6ca','y':'#ccff90'},r:['              ','  gg          ','  gaaaa       ',' aaaaaaa      ',' aawwaaaa     ',' aaewaaaaa    ','  aataaaaaa   ','   aaaaaaaaa  ','    AAAAAaaaa ','     AAAA aaa','      AAA  AA','       AA  AA','        AAAA ','         AA  ','             ']},
+// ── CO₂ スモッグキング（煙の王）──
+CO2:{p:{'a':'#78909c','A':'#455a64','w':'#fff','e':'#263238','c':'#cfd8dc','g':'#ffd700','s':'#90a4ae','k':'#37474f'},r:['    g g g      ','   ggggggg     ','   ccccccc     ','  ccaaaaaccc   ',' ccaaaaaaaacc  ',' caawwaaawwac  ',' caaewaaaewaA  ',' caaaaaaaaaaA  ','  caakaaakaaA  ','  caaammmaaA   ','   caaaaaAA    ','    cAAAAA     ','   AA    AA    ','   AA    AA    ','              ']},
+// ── N₂ ツインニトロ（紫の戦士）──
+N2:{p:{'a':'#d500f9','A':'#7b1fa2','w':'#fff','e':'#4a148c','b':'#ea80fc','d':'#e1bee7'},r:['  bb      bb   ',' baa      aab  ',' aaaa    aaaa  ',' awwaa  aawwa  ',' aewaa  aaewa  ',' aaaaa  aaaaa  ','  aaadddddaA   ','   aadddddAA   ','    AAAAAAA    ','   AA    AA    ','   AA    AA    ']},
+// ── Cl₂ ポイズンバブル（毒泡）──
+Cl2:{p:{'a':'#00e5ff','A':'#00838f','w':'#fff','e':'#006064','b':'#80deea','t':'#e0f7fa','p':'#84ffff'},r:['  t   t   t    ','  bb  bb  bb   ','   aaaaaaa     ','  aaaaaaaaa    ',' aawwaaawwaa   ',' aaewaaaewaA   ',' aaaaaaaaaaaA  ','  aapaaapaaAA  ','   aaammmAA    ','    AAAAAA     ','   AA    AA    ']},
+// ── NaCl ソルトゴーレム（塩の巨人）──
+NaCl:{p:{'a':'#ffab91','A':'#d84315','w':'#fff','e':'#bf360c','c':'#fff3e0','s':'#ffd54f','k':'#ff8a65','h':'#4e342e'},r:['    sssss      ','   sssssss     ','    aaaaaa     ','   aaaaaaaa    ','  aawwaaawwaa  ','  aaewaaaewaA  ','  aaaaaaaaaaA  ','   aaakkkaaA   ',' kkaaaaaaakk   ',' kkaAAAAAAkk   ',' kk AAAAAA kk  ','  k AAAAAA k   ','    AAAAAA     ','   hh    hh    ','   hh    hh    ']},
+// ── CuO コッパーナイト（銅の騎士）──
+CuO:{p:{'a':'#ff6e40','A':'#e65100','w':'#fff','e':'#bf360c','y':'#ffd600','h':'#4e342e','s':'#ffab91','g':'#bdbdbd'},r:['     yyy       ','    yaaay      ','   aaaaaaa     ','  aawwaaawwa   ','  aaewaaaewaA  ','  aaaaaaaaaaA  ','   aaakkkaaA   ',' ggaaAAAAaagg  ',' gg AAAAAA gg  ',' gg AAAAAA gg  ','  g AAAAAA g   ','    AAAAAA     ','    AA  AA     ','   hh    hh    ','   hh    hh    ']},
+// ── FeO アイアンシールド（鉄盾）──
+FeO:{p:{'a':'#8d6e63','A':'#5d4037','w':'#fff','e':'#3e2723','r':'#ff1744','h':'#4e342e','g':'#bdbdbd','s':'#a1887f'},r:['   rr  rr      ','   aaaaaaa     ','  aawwaaawwa   ','  aaewaaaewaA  ','  aaaaaaaaaaA  ','  aaaaaaaaAAA  ','  ggggggggg    ',' ggsssssssgg   ',' ggssAAAAssgg  ',' ggsAAAAAsgg   ',' gg sAAAA gg   ','  g  AAAA g    ','     AAAA      ','    hh  hh     ','    hh  hh     ']},
+// ── AgCl シルバーフォグ（銀霧）──
+AgCl:{p:{'a':'#b0bec5','A':'#78909c','w':'#fff','e':'#37474f','g':'#fdd835','c':'#eceff1','f':'#cfd8dc'},r:['  cc   cc      ','  ccc ccc      ','   aaaaaa      ','  aaaaaaaa     ',' aawwaaawwaa   ',' aaewaaaewaA   ',' aaaaaaaaaaA   ','  aaagggaaA    ','  ccaAAAAcc    ',' cc  AAAA  cc  ',' c    AA    c  ','      AA       ','  cc      cc   ',' cc        cc  ','              ']},
+// ── CuS コッパーデーモン（銅悪魔）──
+CuS:{p:{'a':'#ff6e40','A':'#e65100','w':'#fff','e':'#bf360c','r':'#ff1744','y':'#ffd600','h':'#4e342e','f':'#ff9100'},r:['  rr      rr   ',' rraa    aarr  ',' raaaa  aaaar  ','  aaaaaaaaa    ',' aawwaaawwaa   ',' aaewaaaewaA   ',' aaaaaaaaaaaA  ','  aaraaaaraaA  ','   aaAAAAaA    ','    AAAAAA     ','   AA    AA    ','   hh    hh    ']},
+// ── FeS メタルスコーピオ（鉄サソリ）──
+FeS:{p:{'a':'#8d6e63','A':'#5d4037','w':'#fff','e':'#3e2723','r':'#ff1744','y':'#ffd600','t':'#a1887f'},r:['        ttt    ','       tt t    ','  aaaaaaa t    ',' aaaaaaaaat    ',' aawwaaaww t   ',' aaewaaaewaA   ',' aaaaaaaaaaaA  ','  aaarrraaAA   ','   aaAAAA      ','    AAAA AA    ','    AA    AA   ','   AA      AA  ']},
+// ── NaOH アルカリウス（魔法使い）──
+NaOH:{p:{'a':'#ff5252','A':'#c62828','w':'#fff','e':'#b71c1c','b':'#7c4dff','B':'#651fff','c':'#b388ff','s':'#ea80fc','h':'#4e342e'},r:['    bbbbb      ','   bbbbbbb     ','   baaaaaab    ','    aaaaaa     ','   aawwaawwaa  ','   aaewaaewaa  ','   aaaaaaaaaa  ','    aaammaa    ','   BBBBBBBBs   ','   BcBBBBcBs   ','   BBBBBBBB    ','    BBBBBB     ','    BB  BB     ','   hh    hh    ']},
+// ── H₂S ロッテンエッグ（腐卵）──
+H2S:{p:{'a':'#cddc39','A':'#827717','w':'#fff','e':'#33691e','y':'#ffd600','g':'#f0f4c3','s':'#c6ff00'},r:['    ssss       ','   ssssss      ','   saaaaas     ','  saaaaaaas    ','  aawwaaawwa   ','  aaewaaaewaA  ','  aaaaaaaaaaaA ','   aayaaayaA   ','   aaammmAAA   ','    aaaaaA     ','     AAAA      ','      AA       ']},
+// ── O₃ オゾンガーディアン（守護者）──
+O3:{p:{'a':'#ff9100','A':'#e65100','w':'#fff','e':'#bf360c','c':'#4fc3f7','C':'#0288d1','b':'#80cbc4','g':'#ffd600'},r:['    gggg       ','   gggggg      ','   gaaaaag     ','  gaaaaaaag    ',' aaawwaaawwaa  ',' aaaewaaaewaA  ',' aaaaaaaaaaaA  ','  aacaaacaaA   ',' ccaaammmaacc  ',' cc aaaaaA cc  ','  c  AAAA  c   ','      AA       ','   cc    cc    ']},
+// ── SO₂ ボルケイノス（火山獣）──
+SO2:{p:{'a':'#ff5722','A':'#bf360c','w':'#fff','e':'#6d0000','r':'#ff1744','y':'#ffd600','f':'#ff9100','g':'#ffab00'},r:['   yy  yy      ','  yyyy yyyy    ','   aaaaaaa     ','  aaaaaaaaa    ',' aawwaaawwaa   ',' aaewaaaewaA   ',' aaaaaaaaaaaA  ','  aafaaafaaAA  ','  rrAAAAAArr   ',' rrrAAAAAArrr  ',' rr  AAAA  rr  ','      AA       ','    rr  rr     ']},
+// ── NH₃ アンモナイトX（古代獣）──
+NH3:{p:{'a':'#ce93d8','A':'#7b1fa2','w':'#fff','e':'#4a148c','p':'#f48fb1','d':'#e1bee7','s':'#ea80fc','c':'#ba68c8'},r:['   ss   ss     ','  ssaa aass    ',' ssaaaaaaass   ','  aaaaaaaaaa   ',' aawwaaawwaa   ',' aaewaaaewaA   ',' aaaaaaaaaaaA  ','  aapaaapaaAA  ','   aadddaaA    ','  ccaAAAAcc    ',' cc  AAAA  cc  ','  c   AA   c   ','      AA       ','   cc    cc    ']},
+// ── CH₄ メタンドラゴン（火竜）──
+CH4:{p:{'a':'#ff7043','A':'#d84315','w':'#fff','e':'#bf360c','f':'#ffd600','y':'#ff9100','r':'#ff1744','t':'#ffab91'},r:['  ff      ff   ',' ffff    ffff  ',' f aaaaaaa  f  ','   aaaaaaaaa   ','  aawwaaawwaa  ','  aaewaaaewaA  ','  aaaaaaaaaaaA ','   aayaaayaAA  ','   aaatttaaA   ','    aaaaaa     ','  rrAAAAAArr   ',' rr  AAAA  rr  ','      AA       ','    AA  AA     ']},
+// ── SO₃ サルファーストーム（嵐）──
+SO3:{p:{'a':'#ffee58','A':'#f9a825','w':'#fff','e':'#f57f17','f':'#fff176','s':'#fdd835','r':'#ff5722','c':'#fff9c4'},r:['  cc   cc      ',' cccc cccc     ','  ccaaaacc     ','   aaaaaaaa    ','  aawwaaawwaa  ','  aaewaaaewaA  ','  aaaaaaaaaaaA ','   aasaaasaAA  ','   aarrrrrAA   ','    aaAAAA     ','  rr  AA  rr   ',' rr   AA   rr  ','      AA       ']},
+// ── C₂H₂ アセチレンフレア（溶接炎）──
+C2H2:{p:{'a':'#448aff','A':'#1565c0','w':'#fff','e':'#0d47a1','f':'#ffd600','y':'#ff9100','r':'#ff1744','c':'#bbdefb'},r:['   ff  ff      ','  ffff ffff    ','   faaaaf      ','   aaaaaaa     ','  aawwaaawwaa  ','  aaewaaaewaA  ','  aaaaaaaaaaaA ','   aayaaayaAA  ','   aarrrrrAA   ','    AAAAAA     ','   AA    AA    ','   AA    AA    ']},
+// ── NaHCO₃ ベーキングタイタン（巨人）──
+NaHCO3:{p:{'a':'#ffab91','A':'#d84315','w':'#fff','e':'#bf360c','c':'#fff3e0','s':'#ffd54f','y':'#ffe082','h':'#5d4037','g':'#ff8a65'},r:['    sssss      ','   syyyyys     ','   syaaays     ','   aaaaaaa     ','  aawwaaawwaa  ','  aaewaaaewaA  ','  aaaaaaaaaaaA ','   aaakkkaaAA  ',' ggaaAAAAaagg  ',' gg AAAAAA gg  ',' gg AAAAAA gg  ','  g AAAAAA g   ','    AAAAAA     ','   hh    hh    ','   hh    hh    ']},
+// ── CH₃OH メタノールスピリット（精霊）──
+CH4O:{p:{'a':'#80cbc4','A':'#00695c','w':'#fff','e':'#004d40','b':'#b2dfdb','c':'#e0f2f1','s':'#4db6ac','g':'#ffd600'},r:['   cc   cc     ','  cccc cccc    ','   caaaaac     ','   aaaaaaaa    ','  aawwaaawwaa  ','  aaewaaaewaA  ','  aaaaaaaaaaaA ','  bbagggabbAA  ','  bb aaa bbA   ','   b  A   b    ','      A        ','   cc   cc     ','  cc     cc    ']},
+// ── Fe₂O₃ ラストエンペラー（錆の皇帝）──
+Fe2O3:{p:{'a':'#8d6e63','A':'#5d4037','w':'#fff','e':'#3e2723','g':'#ffd700','r':'#ff1744','y':'#ffab00','h':'#4e342e','c':'#a1887f'},r:['   g r g r g   ','   ggggggg     ','   gaaaaag     ','  gaaaaaaaag   ',' aawwaaawwaa   ',' aaewaaaewaA   ',' aaaaaaaaaaaA  ',' raaraaarcaAA  ','  aaAAAAAAAA   ','  ccAAAAAAAA   ',' cc  AAAA  cc  ','      AA       ','    hh  hh     ','    hh  hh     ']},
+// ── Na₂CO₃ ソーダフェニックス（不死鳥）──
+Na2CO3:{p:{'a':'#ef5350','A':'#c62828','w':'#fff','e':'#b71c1c','f':'#ff9100','y':'#ffd600','r':'#ff1744','c':'#ffcdd2','g':'#ff5252'},r:['      yy       ','     yyyy      ','    yaaaay     ','   ff aaa ff   ','  ff aawwaa ff ','  f aaewaaaf f ','  f aaaaaaaf f ',' ff  aaaaaA ff ','  ff  AAAA ff  ','   ff AAAA ff  ','    ffAAAAf    ','     fAAf      ','      ff       ','     f  f      ']},
+// ── H₂SO₄ ヴィトリオルデーモン（硫酸大悪魔）──
+H2SO4:{p:{'a':'#ab47bc','A':'#6a1b9a','w':'#fff','e':'#4a148c','r':'#ff1744','g':'#ffd600','y':'#ff9100','c':'#ce93d8','d':'#9c27b0','s':'#e040fb'},r:['  rr      rr   ',' rraa    aarr  ','  aaaaaaaaaa   ',' aaaaaaaaaaaa  ',' aawwaaawwaaaa ',' aaewaaaewaAAA ',' aaaaaaaaaaaAA ','  aaraaaaraaA  ',' ssaaammmaaass ','  ss aaaaaAss  ','   s  AAAA s   ','      AAAA     ','     AA  AA    ','    AA    AA   ']},
+// ── C₇ ダイヤモンドキング（結晶王）──
+C7:{p:{'a':'#e040fb','A':'#aa00ff','w':'#fff','e':'#6a1b9a','g':'#ffd700','d':'#ce93d8','r':'#ff1744','b':'#2196f3','n':'#4caf50','k':'#4a148c','c':'#f3e5f5','s':'#ea80fc'},r:['   g r g r g   ','   gGbGgGnGg   ','   gggggggg    ','    dddddddd   ','   dddddddddd  ','  ddwwddddwwdd ','  ddeeddddeedA ','  ddddddddddAA','   ddsdddsddA  ','   ddddddddAA  ','    DDDDDDAA   ','   DD    DDA   ','   kk    kk    ','   kk    kk    ','              ']}
 };
 const CompSprite=({k,size=48})=>{const d=COMP_PIXELS[k];return d?<PA rows={d.r} palette={d.p} size={size}/>:null;};
 
@@ -213,7 +260,7 @@ const AtomCard=({card,sel,onTap})=>{const a=getA(card.s);return <div onClick={()
 
 /* ── モンスターバッジ ─── */
 const MBadge=({comp})=>{const t=comp.atk>=20?"#f44":comp.atk>=10?"#f93":comp.atk>=5?"#fc3":"#5f8";const hasSprite=COMP_PIXELS[comp.k];return <div style={{display:"inline-flex",alignItems:"center",gap:3,background:"#111",padding:"3px 6px",border:`2px solid ${t}44`}}>
-  {hasSprite?<CompSprite k={comp.k} size={20}/>:<span style={{fontSize:12}}>{comp.emoji}</span>}
+  {hasSprite?<CompSprite k={comp.k} size={26}/>:<span style={{fontSize:14}}>{comp.emoji}</span>}
   <span style={{fontSize:9,fontWeight:700,color:"#ccc"}}>{comp.name}</span>
   <span style={{fontSize:9,fontWeight:900,color:"#000",background:t,padding:"0 4px"}}>{comp.atk}</span>
 </div>;};
@@ -342,7 +389,7 @@ const CardPhase=({stage,onDone})=>{
   return <div style={{minHeight:"100dvh",display:"flex",flexDirection:"column",background:"linear-gradient(180deg,#080820,#0c0c30)"}}>
     {/* フュージョン演出 */}
     {justFused&&<div style={{position:"fixed",inset:0,zIndex:9999,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",background:"rgba(6,6,18,.95)",animation:"fadeIn .2s ease"}}>
-      {COMP_PIXELS[justFused.k]?<div style={{animation:"ca .4s ease both"}}><CompSprite k={justFused.k} size={100}/></div>:<div style={{fontSize:64,animation:"ca .4s ease both"}}>{justFused.emoji}</div>}
+      {COMP_PIXELS[justFused.k]?<div style={{animation:"ca .4s ease both",filter:`drop-shadow(0 8px 30px ${justFused.atk>=20?"rgba(255,50,50,.5)":justFused.atk>=10?"rgba(255,150,50,.5)":"rgba(80,255,128,.5)"})`}}><CompSprite k={justFused.k} size={140}/></div>:<div style={{fontSize:80,animation:"ca .4s ease both"}}>{justFused.emoji}</div>}
       <div style={{fontSize:20,fontWeight:900,color:"#fff",marginTop:8,animation:"su .4s .2s ease both",opacity:0}}>{justFused.name}</div>
       <div style={{fontSize:14,color:"#888",marginTop:4,animation:"su .4s .3s ease both",opacity:0}}>{justFused.f} — {justFused.desc}</div>
       <div style={{fontSize:32,fontWeight:900,color:"#fc3",marginTop:8,animation:"su .4s .4s ease both",opacity:0}}>ATK {justFused.atk}</div>
@@ -389,7 +436,7 @@ const CardPhase=({stage,onDone})=>{
       {/* 合成プレビュー */}
       {match&&!justFused&&<div style={{marginTop:14,padding:14,background:"rgba(255,200,50,.06)",border:"2px solid rgba(255,200,50,.3)",textAlign:"center",animation:"ca .3s ease"}}>
         <div style={{fontSize:11,color:"#fc3",fontWeight:700,marginBottom:4}}>がったいできる！</div>
-        {COMP_PIXELS[match.k]?<CompSprite k={match.k} size={64}/>:<div style={{fontSize:36}}>{match.emoji}</div>}
+        {COMP_PIXELS[match.k]?<div style={{filter:`drop-shadow(0 4px 12px ${match.atk>=10?"rgba(255,200,50,.4)":"rgba(80,255,128,.3))"})`}}><CompSprite k={match.k} size={80}/></div>:<div style={{fontSize:40}}>{match.emoji}</div>}
         <div style={{fontSize:16,fontWeight:900,color:"#fff"}}>{match.name}</div>
         <div style={{fontSize:11,color:"#888"}}>{match.f} — {match.desc}</div>
         <div style={{fontSize:20,fontWeight:900,color:"#fc3",marginTop:2}}>ATK {match.atk}</div>
