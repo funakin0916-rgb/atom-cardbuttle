@@ -104,16 +104,16 @@ const BossSprite=({id,size=120})=>{const d=BOSS_PIXELS[id];return d?<PA rows={d.
 
 /* ── 原子データ ─── */
 const ATOMS=[
-  {s:"H",name:"ヒドロン",color:"#4cff4c",bg:"#c8f7c5",tc:"#1b6e1b",n:18,atk:1},
-  {s:"O",name:"オキシモン",color:"#ff9100",bg:"#ffe0b2",tc:"#bf360c",n:14,atk:1},
-  {s:"C",name:"カーボン",color:"#448aff",bg:"#bbdefb",tc:"#0d47a1",n:9,atk:2},
-  {s:"N",name:"ニトロン",color:"#d500f9",bg:"#e1bee7",tc:"#6a1b9a",n:4,atk:3},
-  {s:"S",name:"サルファン",color:"#ffd600",bg:"#fff9c4",tc:"#f57f17",n:4,atk:3},
-  {s:"Cl",name:"クロリン",color:"#00e5ff",bg:"#b2ebf2",tc:"#006064",n:6,atk:2},
-  {s:"Na",name:"ナトリオン",color:"#ff1744",bg:"#f8bbd0",tc:"#b71c1c",n:6,atk:2},
-  {s:"Cu",name:"コッパリン",color:"#ff6e40",bg:"#ffccbc",tc:"#bf360c",n:4,atk:3},
-  {s:"Ag",name:"シルバロン",color:"#90a4ae",bg:"#cfd8dc",tc:"#37474f",n:4,atk:3},
-  {s:"Fe",name:"アイアンガー",color:"#8d6e63",bg:"#d7ccc8",tc:"#3e2723",n:4,atk:3}
+  {s:"H",name:"すいそ",color:"#4cff4c",bg:"#c8f7c5",tc:"#1b6e1b",n:18,atk:1},
+  {s:"O",name:"さんそ",color:"#ff9100",bg:"#ffe0b2",tc:"#bf360c",n:14,atk:1},
+  {s:"C",name:"たんそ",color:"#448aff",bg:"#bbdefb",tc:"#0d47a1",n:9,atk:2},
+  {s:"N",name:"ちっそ",color:"#d500f9",bg:"#e1bee7",tc:"#6a1b9a",n:4,atk:3},
+  {s:"S",name:"いおう",color:"#ffd600",bg:"#fff9c4",tc:"#f57f17",n:4,atk:3},
+  {s:"Cl",name:"えんそ",color:"#00e5ff",bg:"#b2ebf2",tc:"#006064",n:6,atk:2},
+  {s:"Na",name:"ナトリウム",color:"#ff1744",bg:"#f8bbd0",tc:"#b71c1c",n:6,atk:2},
+  {s:"Cu",name:"どう",color:"#ff6e40",bg:"#ffccbc",tc:"#bf360c",n:4,atk:3},
+  {s:"Ag",name:"ぎん",color:"#90a4ae",bg:"#cfd8dc",tc:"#37474f",n:4,atk:3},
+  {s:"Fe",name:"てつ",color:"#8d6e63",bg:"#d7ccc8",tc:"#3e2723",n:4,atk:3}
 ];
 const getA=s=>ATOMS.find(a=>a.s===s)||ATOMS[0];
 const RARITY={H:1,O:1,C:2,Cl:2,Na:2,N:3,S:3,Cu:3,Ag:3,Fe:3};
@@ -122,33 +122,33 @@ const calcPts=a=>{const rare=Object.entries(a).reduce((s,[el,n])=>s+(RARITY[el]|
 
 /* ── 化合物 ─── */
 const COMPOUNDS=[
-  {k:"H2",f:"H₂",name:"ツインヒドロ",a:{H:2},emoji:"💧",desc:"2体が合体！"},
-  {k:"O2",f:"O₂",name:"ダブルオキシ",a:{O:2},emoji:"🌬️",desc:"風をまとう"},
-  {k:"H2O",f:"H₂O",name:"アクアドラゴン",a:{H:2,O:1},emoji:"🐉",desc:"伝説の水竜"},
-  {k:"HCl",f:"HCl",name:"アシッドスネーク",a:{H:1,Cl:1},emoji:"🐍",desc:"酸の毒蛇"},
-  {k:"CO2",f:"CO₂",name:"スモッグキング",a:{C:1,O:2},emoji:"💨",desc:"煙の王"},
-  {k:"N2",f:"N₂",name:"ツインニトロ",a:{N:2},emoji:"🌸",desc:"しずかなる力"},
-  {k:"Cl2",f:"Cl₂",name:"ポイズンバブル",a:{Cl:2},emoji:"🫧",desc:"どくの泡"},
-  {k:"NaCl",f:"NaCl",name:"ソルトゴーレム",a:{Na:1,Cl:1},emoji:"🧂",desc:"塩の巨人"},
-  {k:"CuO",f:"CuO",name:"コッパーナイト",a:{Cu:1,O:1},emoji:"⚔️",desc:"銅の騎士"},
-  {k:"FeO",f:"FeO",name:"アイアンシールド",a:{Fe:1,O:1},emoji:"🛡️",desc:"鉄の盾"},
-  {k:"AgCl",f:"AgCl",name:"シルバーフォグ",a:{Ag:1,Cl:1},emoji:"🌫️",desc:"銀の霧"},
-  {k:"CuS",f:"CuS",name:"コッパーデーモン",a:{Cu:1,S:1},emoji:"👹",desc:"銅の悪魔"},
-  {k:"FeS",f:"FeS",name:"メタルスコーピオ",a:{Fe:1,S:1},emoji:"🦂",desc:"鉄のサソリ"},
-  {k:"NaOH",f:"NaOH",name:"アルカリウス",a:{Na:1,O:1,H:1},emoji:"🧪",desc:"魔法使い"},
-  {k:"H2S",f:"H₂S",name:"ロッテンエッグ",a:{H:2,S:1},emoji:"🥚",desc:"くさい卵"},
-  {k:"O3",f:"O₃",name:"オゾンガーディアン",a:{O:3},emoji:"🌀",desc:"守護者"},
-  {k:"SO2",f:"SO₂",name:"ボルケイノス",a:{S:1,O:2},emoji:"🌋",desc:"火山の魔獣"},
-  {k:"NH3",f:"NH₃",name:"アンモナイトX",a:{N:1,H:3},emoji:"💜",desc:"古代獣"},
-  {k:"CH4",f:"CH₄",name:"メタンドラゴン",a:{C:1,H:4},emoji:"🔥",desc:"メタンの火竜"},
-  {k:"SO3",f:"SO₃",name:"サルファーストーム",a:{S:1,O:3},emoji:"🌪️",desc:"嵐モンスター"},
-  {k:"C2H2",f:"C₂H₂",name:"アセチレンフレア",a:{C:2,H:2},emoji:"⚡",desc:"溶接の炎"},
-  {k:"NaHCO3",f:"NaHCO₃",name:"ベーキングタイタン",a:{Na:1,H:1,C:1,O:3},emoji:"🧁",desc:"ふくらむ巨人"},
-  {k:"CH4O",f:"CH₃OH",name:"メタノールスピリット",a:{C:1,H:4,O:1},emoji:"🍶",desc:"精霊"},
-  {k:"Fe2O3",f:"Fe₂O₃",name:"ラストエンペラー",a:{Fe:2,O:3},emoji:"👑",desc:"さびの皇帝"},
-  {k:"Na2CO3",f:"Na₂CO₃",name:"ソーダフェニックス",a:{Na:2,C:1,O:3},emoji:"🦅",desc:"不死鳥"},
-  {k:"H2SO4",f:"H₂SO₄",name:"ヴィトリオルデーモン",a:{H:2,S:1,O:4},emoji:"⚗️",desc:"硫酸の大悪魔"},
-  {k:"C7",f:"C₇",name:"ダイヤモンドキング",a:{C:7},emoji:"💎",desc:"最強の結晶王",sp:true}
+  {k:"H2",f:"H₂",name:"すいそ分子",a:{H:2},emoji:"💧",desc:"水素が2つ合体！"},
+  {k:"O2",f:"O₂",name:"さんそ分子",a:{O:2},emoji:"🌬️",desc:"酸素が2つ合体！"},
+  {k:"H2O",f:"H₂O",name:"みず",a:{H:2,O:1},emoji:"🐉",desc:"水素と酸素でみずができた！"},
+  {k:"HCl",f:"HCl",name:"えんかすいそ",a:{H:1,Cl:1},emoji:"🐍",desc:"塩化水素！酸性のガス"},
+  {k:"CO2",f:"CO₂",name:"にさんかたんそ",a:{C:1,O:2},emoji:"💨",desc:"二酸化炭素！息にもふくまれる"},
+  {k:"N2",f:"N₂",name:"ちっそ分子",a:{N:2},emoji:"🌸",desc:"窒素が2つ合体！"},
+  {k:"Cl2",f:"Cl₂",name:"えんそ分子",a:{Cl:2},emoji:"🫧",desc:"塩素が2つ合体！"},
+  {k:"NaCl",f:"NaCl",name:"えんかナトリウム",a:{Na:1,Cl:1},emoji:"🧂",desc:"食塩！しょっぱい"},
+  {k:"CuO",f:"CuO",name:"さんかどう",a:{Cu:1,O:1},emoji:"⚔️",desc:"酸化銅！黒い粉"},
+  {k:"FeO",f:"FeO",name:"さんかてつ",a:{Fe:1,O:1},emoji:"🛡️",desc:"酸化鉄！さびの仲間"},
+  {k:"AgCl",f:"AgCl",name:"えんかぎん",a:{Ag:1,Cl:1},emoji:"🌫️",desc:"塩化銀！光で黒くなる"},
+  {k:"CuS",f:"CuS",name:"りゅうかどう",a:{Cu:1,S:1},emoji:"👹",desc:"硫化銅！くらい色の石"},
+  {k:"FeS",f:"FeS",name:"りゅうかてつ",a:{Fe:1,S:1},emoji:"🦂",desc:"硫化鉄！磁石にくっつかない"},
+  {k:"NaOH",f:"NaOH",name:"すいさんかナトリウム",a:{Na:1,O:1,H:1},emoji:"🧪",desc:"水酸化ナトリウム！つよいアルカリ"},
+  {k:"H2S",f:"H₂S",name:"りゅうかすいそ",a:{H:2,S:1},emoji:"🥚",desc:"硫化水素！くさい卵のにおい"},
+  {k:"O3",f:"O₃",name:"オゾン",a:{O:3},emoji:"🌀",desc:"オゾン！空をまもるバリア"},
+  {k:"SO2",f:"SO₂",name:"にさんかいおう",a:{S:1,O:2},emoji:"🌋",desc:"二酸化硫黄！火山ガス"},
+  {k:"NH3",f:"NH₃",name:"アンモニア",a:{N:1,H:3},emoji:"💜",desc:"アンモニア！つよいにおい"},
+  {k:"CH4",f:"CH₄",name:"メタン",a:{C:1,H:4},emoji:"🔥",desc:"メタン！もえるガス"},
+  {k:"SO3",f:"SO₃",name:"さんさんかいおう",a:{S:1,O:3},emoji:"🌪️",desc:"三酸化硫黄！酸性雨のもと"},
+  {k:"C2H2",f:"C₂H₂",name:"アセチレン",a:{C:2,H:2},emoji:"⚡",desc:"アセチレン！溶接につかう"},
+  {k:"NaHCO3",f:"NaHCO₃",name:"じゅうそう",a:{Na:1,H:1,C:1,O:3},emoji:"🧁",desc:"重曹！ふくらし粉"},
+  {k:"CH4O",f:"CH₃OH",name:"メタノール",a:{C:1,H:4,O:1},emoji:"🍶",desc:"メタノール！アルコールの仲間"},
+  {k:"Fe2O3",f:"Fe₂O₃",name:"さんかてつ(III)",a:{Fe:2,O:3},emoji:"👑",desc:"酸化鉄！赤さびの正体"},
+  {k:"Na2CO3",f:"Na₂CO₃",name:"たんさんナトリウム",a:{Na:2,C:1,O:3},emoji:"🦅",desc:"炭酸ナトリウム！洗剤につかう"},
+  {k:"H2SO4",f:"H₂SO₄",name:"りゅうさん",a:{H:2,S:1,O:4},emoji:"⚗️",desc:"硫酸！つよい酸"},
+  {k:"C7",f:"C₇",name:"ダイヤモンド",a:{C:7},emoji:"💎",desc:"炭素だけでできた最強の結晶！",sp:true}
 ].map(c=>({...c,atk:c.sp?50:calcPts(c.a)}));
 
 /* ── ボス＋ステージ＋博士ストーリー ─── */
