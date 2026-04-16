@@ -162,6 +162,7 @@ button:active{transform:scale(.93)!important}
 @keyframes pg{0%,100%{box-shadow:0 0 8px var(--g)}50%{box-shadow:0 0 20px var(--g),0 0 40px var(--g)}}
 @keyframes ca{0%{opacity:0;transform:scale(.6)}60%{transform:scale(1.06)}100%{opacity:1;transform:scale(1)}}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+@keyframes ke{0%{opacity:0;transform:translate(0,0) scale(.3)}30%{opacity:1;transform:translate(calc(var(--dx)*.4),calc(var(--dy)*.4)) scale(1.2)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.2)}}
 @keyframes hitFlash{0%{opacity:1}50%{opacity:0.2}100%{opacity:1}}
 @keyframes slideRight{from{transform:translateX(-100%);opacity:0}to{transform:translateX(0);opacity:1}}
 @keyframes titleGlow{0%,100%{text-shadow:2px 2px 0 #003,0 0 6px rgba(80,180,255,.4)}50%{text-shadow:2px 2px 0 #003,0 0 12px rgba(80,180,255,.7),0 0 24px rgba(80,180,255,.3)}}
@@ -351,8 +352,9 @@ const CardPhase = ({stage, boss, onDone}) => {
   const doPass = () => { SE.pass(); setDrew(false); setDrawnCard(null); };
   const doFinish = () => { onDone(army); };
 
-  // 山札0 → バトルへ移行可能
-  const canFinish = deck.length === 0;
+  // 総ATK ≧ ボスHP で攻撃可能、または山札0でも強制バトル
+  const canAttack = totalAtk >= boss.hp;
+  const deckEmpty = deck.length === 0;
 
   return <div style={{minHeight:"100dvh",display:"flex",flexDirection:"column",background:"linear-gradient(180deg,#080820,#0c0c30)"}}>
     {/* フュージョン演出 */}
@@ -473,141 +475,215 @@ const CardPhase = ({stage, boss, onDone}) => {
       </div>
     </div>
 
+    {/* 攻撃可能バナー */}
+    {canAttack && !justFused && <div style={{padding:"10px 16px",textAlign:"center",background:"rgba(255,50,50,.08)",borderBottom:"2px solid rgba(255,50,50,.3)",animation:"su .3s ease"}}>
+      <span style={{fontSize:15,color:"#f44",fontWeight:900,animation:"pg 1.5s ease-in-out infinite","--g":"rgba(255,50,50,.5)"}}>⚔️ ボスのHPをこえた！こうげきできるぞ！</span>
+    </div>}
+
     {/* アクションバー */}
     <div style={{padding:"12px 16px max(24px,env(safe-area-inset-bottom))",borderTop:"1px solid #222",display:"flex",gap:10,background:"rgba(8,8,32,.97)"}}>
-      {canFinish
-        ? <Btn onClick={doFinish} bg="#c62828" style={{flex:1,padding:14,fontSize:16,"--g":"rgba(255,50,50,.4)",animation:"pg 1.5s ease-in-out infinite"}}>⚔️ バトルへ！</Btn>
-        : !drew
-          ? <Btn onClick={doDraw} bg="#2244aa" style={{flex:1,padding:14,fontSize:16}}>🃏 カードをひく</Btn>
-          : !overLimit && <Btn onClick={doPass} bg="#445566" style={{flex:1,padding:14,fontSize:16}}>{possible.length>0?"🔬 パス":"➡️ つぎへ"}</Btn>
+      {canAttack
+        ? <Btn onClick={doFinish} bg="#c62828" style={{flex:1,padding:16,fontSize:18,"--g":"rgba(255,50,50,.5)",animation:"pg 1.5s ease-in-out infinite"}}>⚔️ こうげき！</Btn>
+        : deckEmpty
+          ? <Btn onClick={doFinish} bg="#555" style={{flex:1,padding:14,fontSize:14}}>😢 バトルへ（ATKたりない…）</Btn>
+          : !drew
+            ? <Btn onClick={doDraw} bg="#2244aa" style={{flex:1,padding:14,fontSize:16}}>🃏 カードをひく</Btn>
+            : !overLimit && <Btn onClick={doPass} bg="#445566" style={{flex:1,padding:14,fontSize:16}}>{possible.length>0?"🔬 パス":"➡️ つぎへ"}</Btn>
       }
     </div>
   </div>;
 };
 
 /* ═══════════════════════════════════════════════════════════
-   ⚔️ バトルフェーズ
+   ⚔️ バトルフェーズ — 派手な撃破演出
    ═══════════════════════════════════════════════════════════ */
 const BattlePhase = ({army, boss, stage, onResult}) => {
-  const [phase, setPhase] = useState("intro"); // intro → attacking → result
+  // phases: intro → charge → allAttack → bossHit → bossDeath → result (won)
+  //         intro → charge → allAttack → bossHit → result (lost)
+  const [phase, setPhase] = useState("intro");
   const [bossHp, setBossHp] = useState(boss.hp);
-  const [atkIdx, setAtkIdx] = useState(-1);
   const [shaking, setShaking] = useState(false);
-  const [dmgPopup, setDmgPopup] = useState(null);
+  const [flashWhite, setFlashWhite] = useState(false);
+  const [chargeIdx, setChargeIdx] = useState(-1);
   const totalAtk = army.reduce((s,m)=>s+m.atk,0);
+  const won = totalAtk >= boss.hp;
 
+  // 撃破エフェクト用パーティクル
+  const particles = useRef(Array.from({length:40},(_,i)=>{
+    const ang = (i/40)*360*Math.PI/180;
+    const dist = 60+Math.random()*100;
+    return {id:i, x:Math.cos(ang)*dist, y:Math.sin(ang)*dist, em:["💥","⭐","✨","🔥","💫","⚡"][i%6], sz:16+Math.random()*20, dl:Math.random()*.5};
+  })).current;
+
+  // フェーズ遷移
   useEffect(()=>{
     if(phase==="intro"){
       SE.battleStart();
-      setTimeout(()=>setPhase("attacking"), 2000);
+      setTimeout(()=>setPhase("charge"), 2200);
+    }
+    if(phase==="charge"){
+      // 味方モンスターが1体ずつチャージ
+      let i=0;
+      const iv = setInterval(()=>{
+        if(i<army.length){ setChargeIdx(i); SE.select(); i++; }
+        else { clearInterval(iv); setTimeout(()=>setPhase("allAttack"),600); }
+      }, 300);
+      return ()=>clearInterval(iv);
+    }
+    if(phase==="allAttack"){
+      // 全員で一斉攻撃！
+      SE.attack();
+      setShaking(true);
+      setFlashWhite(true);
+      setTimeout(()=>setFlashWhite(false),200);
+      // HPを一気に削る
+      const drain = () => {
+        let remaining = boss.hp;
+        const steps = 15;
+        const perStep = boss.hp / steps;
+        let step = 0;
+        const iv = setInterval(()=>{
+          step++;
+          remaining = Math.max(0, boss.hp - Math.round(totalAtk * (step/steps)));
+          if(remaining < 0) remaining = 0;
+          setBossHp(Math.max(0, remaining));
+          if(step >= steps){
+            clearInterval(iv);
+            setBossHp(Math.max(0, boss.hp - totalAtk));
+            setShaking(false);
+            setTimeout(()=>{
+              if(won) { setPhase("bossDeath"); }
+              else { SE.lose(); setPhase("result"); }
+            }, 600);
+          }
+        }, 80);
+      };
+      setTimeout(drain, 400);
+    }
+    if(phase==="bossDeath"){
+      // 撃破演出
+      SE.fuse(50);
+      setShaking(true);
+      setTimeout(()=>setShaking(false), 500);
+      setTimeout(()=>{
+        setFlashWhite(true);
+        setTimeout(()=>setFlashWhite(false), 300);
+      }, 800);
+      setTimeout(()=>{
+        SE.victory();
+        setPhase("result");
+      }, 1800);
     }
   },[phase]);
 
-  useEffect(()=>{
-    if(phase!=="attacking") return;
-    if(atkIdx < 0) { setTimeout(()=>setAtkIdx(0), 500); return; }
-    if(atkIdx >= army.length) {
-      // 全員攻撃完了
-      setTimeout(()=>{
-        const won = bossHp <= 0;
-        if(won) SE.victory(); else SE.lose();
-        setPhase("result");
-      }, 800);
-      return;
-    }
-    // 1体ずつ攻撃
-    const timer = setTimeout(()=>{
-      const m = army[atkIdx];
-      SE.attack();
-      setShaking(true);
-      setDmgPopup({atk:m.atk, x:30+Math.random()*40});
-      setBossHp(hp => Math.max(0, hp - m.atk));
-      setTimeout(()=>{setShaking(false);setDmgPopup(null);}, 400);
-      setTimeout(()=>setAtkIdx(atkIdx+1), 700);
-    }, 600);
-    return ()=>clearTimeout(timer);
-  },[phase, atkIdx]);
-
-  const won = bossHp <= 0;
-
-  // イントロ
+  // ── イントロ ──
   if(phase==="intro") return <div style={{minHeight:"100dvh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",background:"linear-gradient(180deg,#100808,#200c0c)",position:"relative"}}>
     <Stars n={15} /><Scanlines />
-    <div style={{position:"relative",zIndex:2,textAlign:"center",animation:"ca .5s ease both"}}>
-      <div style={{fontSize:14,color:"#f44",fontWeight:700,marginBottom:12,letterSpacing:".1em"}}>⚔️ BATTLE START ⚔️</div>
-      <BossSprite boss={boss} size={140} />
-      <div style={{fontSize:24,fontWeight:900,color:"#fff",marginTop:8}}>{boss.name}</div>
-      <div style={{fontSize:14,color:"#888",marginTop:4}}>{boss.desc}</div>
-      <div style={{marginTop:8}}>
-        <span style={{fontSize:14,color:"#f44",fontWeight:900}}>HP {boss.hp}</span>
-        <span style={{fontSize:12,color:"#555",marginLeft:8}}>vs</span>
-        <span style={{fontSize:14,color:"#5f8",fontWeight:900,marginLeft:8}}>ATK {totalAtk}</span>
+    <div style={{position:"relative",zIndex:2,textAlign:"center"}}>
+      <div style={{fontSize:16,color:"#f44",fontWeight:900,marginBottom:16,letterSpacing:".15em",animation:"pg 1s ease-in-out infinite","--g":"rgba(255,50,50,.5)",fontFamily:"'Press Start 2P','DotGothic16',monospace"}}>BATTLE START</div>
+      <div style={{animation:"ca .6s ease both"}}>
+        <BossSprite boss={boss} size={160} />
+      </div>
+      <div style={{fontSize:28,fontWeight:900,color:"#fff",marginTop:12,animation:"su .5s .3s ease both",opacity:0}}>{boss.emoji} {boss.name}</div>
+      <div style={{fontSize:13,color:"#888",marginTop:6,animation:"su .5s .5s ease both",opacity:0}}>{boss.desc}</div>
+      <div style={{marginTop:12,animation:"su .5s .7s ease both",opacity:0}}>
+        <span style={{fontSize:18,color:"#f44",fontWeight:900}}>HP {boss.hp}</span>
+      </div>
+      {/* 味方軍団プレビュー */}
+      <div style={{marginTop:20,animation:"su .5s .9s ease both",opacity:0}}>
+        <div style={{fontSize:11,color:"#5cf",fontWeight:700,marginBottom:6}}>きみのぐんだん — そうATK {totalAtk}</div>
+        <div style={{display:"flex",flexWrap:"wrap",gap:4,justifyContent:"center"}}>
+          {army.map((m,i)=><span key={i} style={{fontSize:16}}>{m.emoji}</span>)}
+        </div>
       </div>
     </div>
   </div>;
 
-  // バトル中＆リザルト
-  return <div style={{minHeight:"100dvh",display:"flex",flexDirection:"column",background:"linear-gradient(180deg,#100808,#200c0c)",position:"relative"}}>
+  // ── バトルメイン画面 ──
+  return <div style={{minHeight:"100dvh",display:"flex",flexDirection:"column",background:"linear-gradient(180deg,#100808,#200c0c)",position:"relative",overflow:"hidden"}}>
     <Stars n={10} /><Scanlines />
+
+    {/* 白フラッシュ */}
+    {flashWhite && <div style={{position:"fixed",inset:0,background:"#fff",zIndex:100,animation:"fadeIn .1s ease"}} />}
+
     <div style={{position:"relative",zIndex:2,flex:1,display:"flex",flexDirection:"column",padding:"max(16px,env(safe-area-inset-top)) 16px 24px"}}>
 
-      {/* ボスエリア */}
-      <div style={{textAlign:"center",marginBottom:12}}>
-        <div style={{animation:shaking?"shake .3s ease":"bossIdle 3s ease-in-out infinite",display:"inline-block"}}>
-          <BossSprite boss={boss} size={phase==="result"&&won?100:120} shake={shaking} />
-          {phase==="result"&&won && <div style={{fontSize:14,color:"#f44",fontWeight:900,marginTop:4}}>💥 撃破！</div>}
-        </div>
+      {/* ── ボスエリア ── */}
+      <div style={{textAlign:"center",marginBottom:12,position:"relative"}}>
+        {phase==="bossDeath" ? <>
+          {/* 撃破パーティクル */}
+          {particles.map(p=><div key={p.id} style={{position:"absolute",left:"50%",top:"40%",fontSize:p.sz,transform:"translate(-50%,-50%)",animation:`ke .8s ${p.dl}s cubic-bezier(.2,.6,.3,1) forwards`,opacity:0,"--dx":`${p.x}px`,"--dy":`${p.y}px`,zIndex:5}}>{p.em}</div>)}
+          {/* ボス消滅 */}
+          <div style={{animation:"shake .5s ease",opacity:.3,filter:"brightness(3) saturate(0)"}}>
+            <BossSprite boss={boss} size={120} />
+          </div>
+          <div style={{fontSize:32,fontWeight:900,color:"#ff1744",marginTop:8,animation:"ca .3s ease both",textShadow:"0 0 20px #f00"}}>💥 DESTROYED 💥</div>
+        </> : <>
+          <div style={{display:"inline-block",animation:shaking?"shake .3s ease infinite":"bossIdle 3s ease-in-out infinite",transition:"all .3s"}}>
+            <BossSprite boss={boss} size={120} />
+          </div>
+        </>}
 
         {/* HP バー */}
-        <div style={{margin:"8px auto",maxWidth:260}}>
+        {phase!=="bossDeath" && <div style={{margin:"8px auto",maxWidth:260}}>
           <div style={{display:"flex",justifyContent:"space-between",fontSize:11,color:"#f44",fontWeight:700}}>
-            <span>{boss.name}</span>
+            <span>{boss.emoji} {boss.name}</span>
             <span>HP {Math.max(0,bossHp)} / {boss.hp}</span>
           </div>
-          <div style={{height:16,background:"#1a0a0a",border:"2px solid #422",position:"relative",overflow:"hidden"}}>
-            <div style={{height:"100%",width:`${Math.max(0,bossHp/boss.hp*100)}%`,background:bossHp/boss.hp>.5?"linear-gradient(90deg,#4caf50,#66bb6a)":bossHp/boss.hp>.25?"linear-gradient(90deg,#ff9800,#ffc107)":"linear-gradient(90deg,#f44336,#e57373)",transition:"width .4s ease"}} />
+          <div style={{height:18,background:"#1a0a0a",border:"2px solid #422",position:"relative",overflow:"hidden"}}>
+            <div style={{height:"100%",width:`${Math.max(0,bossHp/boss.hp*100)}%`,background:bossHp/boss.hp>.5?"linear-gradient(90deg,#4caf50,#66bb6a)":bossHp/boss.hp>.25?"linear-gradient(90deg,#ff9800,#ffc107)":"linear-gradient(90deg,#f44336,#e57373)",transition:"width .15s ease"}} />
           </div>
-        </div>
-
-        {/* ダメージポップアップ */}
-        {dmgPopup && <div style={{position:"absolute",left:`${dmgPopup.x}%`,top:80,fontSize:28,fontWeight:900,color:"#ff1744",textShadow:"0 0 8px #f00",animation:"su .3s ease both",zIndex:10}}>-{dmgPopup.atk}</div>}
+        </div>}
       </div>
 
-      {/* 味方軍団 */}
-      <div style={{fontSize:12,color:"#5cf",fontWeight:700,marginBottom:6}}>⚔️ きみの モンスターぐんだん</div>
+      {/* ── 味方軍団 ── */}
+      <div style={{fontSize:12,color:"#5cf",fontWeight:700,marginBottom:6}}>
+        {phase==="charge"?"⚡ チャージ中…":phase==="allAttack"?"💥 ぜんいん こうげき！":"⚔️ きみの モンスターぐんだん"}
+        <span style={{color:"#fc3",marginLeft:8}}>ATK {totalAtk}</span>
+      </div>
       <div style={{display:"flex",flexWrap:"wrap",gap:4,marginBottom:12}}>
         {army.map((m,i)=>{
-          const attacked = i < atkIdx;
-          const attacking = i === atkIdx && phase==="attacking";
+          const charged = phase==="charge" && i <= chargeIdx;
+          const attacking = phase==="allAttack";
           return <div key={i} style={{
-            padding:"4px 8px",background:attacking?"rgba(255,200,50,.15)":attacked?"rgba(80,255,128,.05)":"#111",
-            border:`2px solid ${attacking?"#fc3":attacked?"#5f833":"#222"}`,
-            opacity:attacked?.6:1,transition:"all .3s",
-            animation:attacking?"slideRight .3s ease both":"none"
+            padding:"4px 8px",
+            background:attacking?"rgba(255,200,50,.2)":charged?"rgba(80,180,255,.1)":"#111",
+            border:`2px solid ${attacking?"#fc3":charged?"#5cf":"#222"}`,
+            transition:"all .2s",
+            animation:attacking?`slideRight .3s ${i*0.05}s ease both`:charged?"ca .3s ease both":"none",
+            transform:attacking?"scale(1.05)":"none"
           }}>
             <span style={{fontSize:12}}>{m.emoji}</span>
-            <span style={{fontSize:10,fontWeight:700,color:"#ccc",marginLeft:4}}>{m.name}</span>
-            <span style={{fontSize:10,fontWeight:900,color:attacking?"#fc3":"#888",marginLeft:4}}>ATK {m.atk}</span>
-            {attacked && <span style={{fontSize:9,color:"#5f8",marginLeft:4}}>✓</span>}
+            <span style={{fontSize:10,fontWeight:700,color:attacking?"#fc3":charged?"#5cf":"#ccc",marginLeft:4}}>{m.name}</span>
+            <span style={{fontSize:10,fontWeight:900,color:attacking?"#ff1744":"#888",marginLeft:4}}>{m.atk}</span>
           </div>;
         })}
         {army.length===0 && <div style={{fontSize:12,color:"#555"}}>モンスターがいない…</div>}
       </div>
 
-      {/* リザルト */}
+      {/* ── リザルト ── */}
       {phase==="result" && <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",animation:"su .5s ease both"}}>
         {won ? <>
-          <div style={{fontSize:64,animation:"ca .5s ease both"}}>🏆</div>
-          <div style={{fontSize:24,fontWeight:900,color:"#fc3",marginTop:8,fontFamily:"'Press Start 2P','DotGothic16',monospace"}}>勝利！</div>
-          <div style={{fontSize:13,color:"#888",marginTop:8}}>そうATK {totalAtk} で {boss.name} (HP {boss.hp}) を撃破！</div>
+          <div style={{fontSize:72,animation:"ca .5s ease both",filter:"drop-shadow(0 8px 30px rgba(255,200,50,.5))"}}>🏆</div>
+          <div style={{fontSize:20,fontWeight:900,color:"#fc3",marginTop:12,fontFamily:"'Press Start 2P','DotGothic16',monospace",textShadow:"0 0 20px rgba(255,200,50,.4)"}}>勝利！</div>
+          <div style={{fontSize:13,color:"#888",marginTop:12,textAlign:"center",lineHeight:1.8}}>
+            そうATK <span style={{color:"#5f8",fontWeight:900}}>{totalAtk}</span> で<br/>
+            {boss.emoji} {boss.name} (HP {boss.hp}) を げきは！
+          </div>
+          <div style={{marginTop:8,fontSize:12,color:"#fc3",fontWeight:700}}>
+            +{boss.hp * 10} EXP
+          </div>
         </> : <>
-          <div style={{fontSize:64,animation:"ca .5s ease both"}}>😢</div>
-          <div style={{fontSize:24,fontWeight:900,color:"#888",marginTop:8}}>敗北…</div>
-          <div style={{fontSize:13,color:"#666",marginTop:8}}>そうATK {totalAtk} — あと {boss.hp - totalAtk} たりなかった…</div>
+          <div style={{fontSize:72,animation:"ca .5s ease both"}}>😢</div>
+          <div style={{fontSize:20,fontWeight:900,color:"#666",marginTop:12}}>敗北…</div>
+          <div style={{fontSize:13,color:"#555",marginTop:12,textAlign:"center",lineHeight:1.8}}>
+            そうATK <span style={{color:"#f44",fontWeight:900}}>{totalAtk}</span><br/>
+            あと <span style={{color:"#f44",fontWeight:900}}>{boss.hp - totalAtk}</span> たりなかった…
+          </div>
         </>}
 
         <div style={{display:"flex",flexDirection:"column",gap:10,marginTop:24,width:"100%",maxWidth:260}}>
-          {won && STAGES.find(s=>s.id===stage.id+1) && <Btn onClick={()=>onResult(won, "next")} bg="#c62828" style={{width:"100%",fontSize:14}}>▶ つぎのステージへ</Btn>}
+          {won && STAGES.find(s=>s.id===stage.id+1) && <Btn onClick={()=>onResult(won, "next")} bg="#c62828" style={{width:"100%",fontSize:15}}>▶ つぎのステージへ</Btn>}
           <Btn onClick={()=>onResult(won, "retry")} bg="#e65100" style={{width:"100%",fontSize:14}}>🔄 もういちど</Btn>
           <Btn onClick={()=>onResult(won, "home")} bg="#334" style={{width:"100%",fontSize:14}}>🏠 トップへ</Btn>
         </div>
