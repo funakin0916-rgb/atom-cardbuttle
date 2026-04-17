@@ -11,7 +11,39 @@ const useLang=()=>useContext(LangCtx);
 /* ── SE ─── */
 const SE=(()=>{let ctx=null,en=true;const gc=()=>{if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();if(ctx.state==="suspended")ctx.resume();return ctx;};const p=fn=>{if(!en)return;try{fn(gc());}catch(e){}};const tone=(c,t,f1,f2,d,v=.12)=>{const o=c.createOscillator(),g=c.createGain();o.type=t;o.frequency.setValueAtTime(f1,c.currentTime);if(f2)o.frequency.exponentialRampToValueAtTime(f2,c.currentTime+d*.6);g.gain.setValueAtTime(v,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d);o.connect(g).connect(c.destination);o.start(c.currentTime);o.stop(c.currentTime+d);};return{setEnabled:v=>{en=v},isEnabled:()=>en,tap:()=>p(c=>tone(c,"sine",1000,null,.05,.05)),draw:()=>p(c=>tone(c,"sine",800,1200,.15,.15)),select:()=>p(c=>tone(c,"triangle",600,900,.1,.1)),deselect:()=>p(c=>tone(c,"triangle",700,400,.1,.08)),fuse:pts=>p(c=>{const t=c.currentTime;const ns=pts>=15?[523,659,784,1047,1319]:pts>=9?[523,659,784,1047]:pts>=5?[523,659,784]:[523,659];ns.forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.type=pts>=15?"square":"sine";o.frequency.setValueAtTime(f,t+i*.12);g.gain.setValueAtTime(.12,t+i*.12);g.gain.exponentialRampToValueAtTime(.001,t+i*.12+.4);o.connect(g).connect(c.destination);o.start(t+i*.12);o.stop(t+i*.12+.4);});}),pass:()=>p(c=>tone(c,"sine",400,300,.25,.08)),discard:()=>p(c=>tone(c,"sawtooth",300,100,.2,.06)),attack:()=>p(c=>{const t=c.currentTime;[200,250,150].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.type="sawtooth";o.frequency.setValueAtTime(f,t+i*.08);g.gain.setValueAtTime(.15,t+i*.08);g.gain.exponentialRampToValueAtTime(.001,t+i*.08+.15);o.connect(g).connect(c.destination);o.start(t+i*.08);o.stop(t+i*.08+.15);});}),victory:()=>p(c=>{const t=c.currentTime;[523,523,523,698,784,698,784,1047].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.type=i>=6?"square":"sine";o.frequency.setValueAtTime(f,t+i*.18);g.gain.setValueAtTime(.15,t+i*.18);g.gain.exponentialRampToValueAtTime(.001,t+i*.18+.5);o.connect(g).connect(c.destination);o.start(t+i*.18);o.stop(t+i*.18+.5);});}),lose:()=>p(c=>{const t=c.currentTime;[392,349,330,294,262].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.type="sine";o.frequency.setValueAtTime(f,t+i*.3);g.gain.setValueAtTime(.1,t+i*.3);g.gain.exponentialRampToValueAtTime(.001,t+i*.3+.6);o.connect(g).connect(c.destination);o.start(t+i*.3);o.stop(t+i*.3+.6);});}),battleStart:()=>p(c=>{const t=c.currentTime;[262,330,392,523].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.type="square";o.frequency.setValueAtTime(f,t+i*.1);g.gain.setValueAtTime(.1,t+i*.1);g.gain.exponentialRampToValueAtTime(.001,t+i*.1+.3);o.connect(g).connect(c.destination);o.start(t+i*.1);o.stop(t+i*.1+.3);});})};})();
 
-/* ── PixelArt SVG ─── */
+/* ── BGMエンジン ─── */
+const BGM=(()=>{
+  let ctx=null,playing=false,nodes=[],timer=null,curTrack="title";
+  const stopAll=()=>{if(timer){clearTimeout(timer);timer=null;}nodes.forEach(n=>{try{n.stop();}catch(e){}});nodes=[];};
+  const TRACKS={
+    title:{mel:[[440,.4],[494,.4],[587,.4],[659,.4],[440,.4],[587,.2],[659,.2],[587,.4],[494,.8],[440,.4],[587,.4],[659,.4],[784,.8],[659,.4],[587,.4],[494,.8],[440,.4],[494,.2],[587,.2],[494,.4],[440,.8],[392,.4],[440,.8]],bas:[[220,.8],[220,.8],[294,.8],[294,.8],[220,.8],[220,.8],[196,.8],[196,.8],[220,.8],[220,.8],[294,.8],[294,.8],[196,.8],[196,.8],[220,1.6]],mt:"triangle",bt:"sine",mv:0.05,bv:0.03},
+    battle:{mel:[[523,.2],[0,.1],[659,.2],[0,.1],[784,.2],[659,.2],[0,.1],[523,.2],[0,.1],[659,.2],[784,.4],[0,.2],[880,.2],[784,.2],[659,.2],[0,.1],[523,.2],[0,.1],[587,.2],[659,.2],[587,.4],[523,.4],[0,.2],[440,.2],[523,.2],[659,.2],[0,.1],[587,.2],[523,.2],[440,.4],[523,.2],[0,.1],[440,.4],[0,.4]],bas:[[262,.4],[262,.4],[330,.4],[330,.4],[349,.4],[349,.4],[262,.4],[262,.4],[220,.4],[220,.4],[262,.4],[262,.4],[196,.4],[196,.4],[220,.4],[262,.4]],mt:"square",bt:"triangle",mv:0.04,bv:0.035},
+    battle_hard:{mel:[[330,.1],[0,.05],[330,.1],[0,.05],[330,.1],[0,.1],[494,.15],[0,.05],[440,.2],[0,.1],[392,.1],[0,.05],[440,.1],[0,.05],[494,.2],[0,.1],[523,.15],[0,.05],[494,.2],[0,.1],[659,.15],[0,.05],[587,.15],[0,.05],[494,.2],[440,.1],[0,.05],[392,.2],[0,.1],[330,.1],[0,.05],[392,.1],[0,.05],[440,.15],[0,.05],[494,.2],[0,.1],[587,.2],[0,.1],[523,.15],[0,.05],[494,.2],[440,.15],[0,.05],[392,.2],[0,.1],[330,.2],[0,.1],[294,.3],[0,.2]],bas:[[165,.3],[165,.3],[196,.3],[196,.3],[220,.3],[220,.3],[247,.3],[247,.3],[165,.3],[165,.3],[131,.3],[131,.3],[147,.3],[147,.3],[165,.6],[165,.3],[165,.3],[196,.3],[196,.3],[131,.3],[131,.3],[165,.6]],mt:"sawtooth",bt:"square",mv:0.045,bv:0.03}
+  };
+  const loop=()=>{
+    if(!playing)return;
+    try{
+      if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();
+      if(ctx.state==="suspended")ctx.resume();
+      stopAll();
+      const tr=TRACKS[curTrack]||TRACKS.title;
+      const t=ctx.currentTime;
+      let off=0;
+      tr.mel.forEach(([f,d])=>{if(f===0){off+=d;return;}const o=ctx.createOscillator(),g=ctx.createGain();o.type=tr.mt;o.frequency.setValueAtTime(f,t+off);g.gain.setValueAtTime(tr.mv,t+off);g.gain.exponentialRampToValueAtTime(.001,t+off+d*.9);o.connect(g).connect(ctx.destination);o.start(t+off);o.stop(t+off+d);nodes.push(o);off+=d;});
+      const ld=off;let bo=0;
+      tr.bas.forEach(([f,d])=>{if(bo>=ld)return;if(f===0){bo+=d;return;}const o=ctx.createOscillator(),g=ctx.createGain();o.type=tr.bt;o.frequency.setValueAtTime(f,t+bo);g.gain.setValueAtTime(tr.bv,t+bo);g.gain.exponentialRampToValueAtTime(.001,t+bo+d*.85);o.connect(g).connect(ctx.destination);o.start(t+bo);o.stop(t+bo+d);nodes.push(o);bo+=d;});
+      timer=setTimeout(loop,ld*1000-100);
+    }catch(e){}
+  };
+  if(typeof document!=='undefined'){
+    document.addEventListener('visibilitychange',()=>{if(document.hidden)stopAll();else if(playing)loop();});
+  }
+  return{
+    start:trackId=>{const t=trackId||"title";if(playing&&curTrack===t)return;stopAll();curTrack=t;playing=true;loop();},
+    stop:()=>{playing=false;stopAll();},
+    on:()=>playing,track:()=>curTrack
+  };
+})();
 const PA=({rows,palette,size=100})=>{const h=rows.length,w=Math.max(...rows.map(r=>r.length)),px=size/Math.max(w,h);return <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{imageRendering:"pixelated"}}>{rows.map((row,y)=>row.split('').map((ch,x)=>{const col=palette[ch];return col?<rect key={`${x}-${y}`} x={x*px} y={y*px} width={px+.5} height={px+.5} fill={col}/>:null;}))}</svg>;};
 
 /* ── 博士 ─── */
@@ -183,6 +215,9 @@ const Scan=()=><div style={{position:"fixed",inset:0,pointerEvents:"none",zIndex
 const Btn=({children,onClick,bg="#3355cc",disabled,style,...r})=><button onClick={()=>{if(!disabled){SE.tap();onClick?.();}}} disabled={disabled} style={{border:`3px solid ${disabled?"#444":bg}`,background:disabled?"#222":bg,color:disabled?"#555":"#fff",fontSize:14,fontWeight:700,padding:"12px 20px",boxShadow:disabled?"none":`0 4px 0 rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.2)`,textShadow:disabled?"none":"1px 1px 0 rgba(0,0,0,.6)",...style}} {...r}>{children}</button>;
 const SBtn=({l,a,co="#5cf",onClick})=><button onClick={()=>{onClick();SE.tap();}} style={{padding:"6px 10px",border:`2px solid ${a?co:"#333"}`,background:a?co+"22":"#111",color:a?co:"#555",fontSize:12,fontWeight:700}}>{l}</button>;
 
+/* ── BGMボタン（固定） ─── */
+const BgmBtn=()=>{const[on,setOn]=useState(BGM.on());return <button onClick={()=>{if(on){BGM.stop();setOn(false);}else{BGM.start();setOn(true);}}} style={{padding:"3px 8px",border:`2px solid ${on?"#5cf":"#333"}`,background:on?"#112":"#111",color:on?"#5cf":"#444",fontSize:10,fontWeight:700,cursor:"pointer",position:"fixed",top:"max(8px,env(safe-area-inset-top))",right:8,zIndex:100,fontFamily:"'DotGothic16',monospace"}}>{on?"🔊 BGM":"🔇 BGM"}</button>;};
+
 /* ── 原子カード ─── */
 const AtomCard=({card,sel,onTap})=>{const a=getA(card.s);const an=useAN();return <div onClick={()=>onTap?.(card)} style={{width:62,minWidth:62,height:82,background:sel?a.bg:"#161630",border:`3px solid ${sel?a.color:"#334"}`,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",boxShadow:sel?`0 0 8px ${a.color}88`:`0 3px 0 #0a0a1a`,cursor:onTap?"pointer":"default",transition:"all .12s",flexShrink:0,transform:sel?"translateY(-8px)":"none","--g":a.color+"66",animation:sel?"pg 1.5s ease-in-out infinite":"ca .3s ease both",gap:0}}>
   <AtomSprite s={card.s} size={28}/>
@@ -210,24 +245,60 @@ const Prologue=({onDone})=>{const[pg,setPg]=useState(0);const[fade,setFade]=useS
 /* ═══════════════════════════════════════════════════════════
    タイトル＋設定＋ステージ選択
    ═══════════════════════════════════════════════════════════ */
-const TitleScreen=({onSelectStage,cleared,prologueDone,setPrologueDone,lang,setLang})=>{
+const TitleScreen=({onSelectStage,onStartCpu,cleared,prologueDone,setPrologueDone,lang,setLang})=>{
   const[mode,setMode]=useState(null);
   const[selStage,setSelStage]=useState(null);
+  const[cpuDiff,setCpuDiff]=useState("normal");
+  const[bgmOn,setBgmOn]=useState(BGM.on());
+  const[seOn,setSeOn]=useState(SE.isEnabled());
 
   if(!prologueDone) return <Prologue onDone={()=>setPrologueDone(true)}/>;
 
   const SettingsPanel=()=><div style={{marginTop:16,padding:14,background:"#0c0c1a",border:"2px solid #223",maxWidth:300,width:"100%"}}>
     <div style={{fontSize:13,fontWeight:900,color:"#fc3",marginBottom:10}}>⚙️ せってい</div>
     <div style={{fontSize:12,color:"#888",fontWeight:700,marginBottom:6}}>🔤 もじ</div>
-    <div style={{display:"flex",gap:8,justifyContent:"center"}}><SBtn l="ひらがな" a={lang==="hiragana"} co="#5cf" onClick={()=>setLang("hiragana")}/><SBtn l="漢字" a={lang==="kanji"} co="#5cf" onClick={()=>setLang("kanji")}/></div>
+    <div style={{display:"flex",gap:8,justifyContent:"center",marginBottom:12}}><SBtn l="ひらがな" a={lang==="hiragana"} co="#5cf" onClick={()=>setLang("hiragana")}/><SBtn l="漢字" a={lang==="kanji"} co="#5cf" onClick={()=>setLang("kanji")}/></div>
+    <div style={{fontSize:12,color:"#888",fontWeight:700,marginBottom:6}}>🔊 おと</div>
+    <div style={{display:"flex",gap:12,justifyContent:"center"}}>
+      <div style={{display:"flex",alignItems:"center",gap:4}}><span style={{fontSize:10,color:"#666"}}>BGM</span><SBtn l="ON" a={bgmOn} co="#5f8" onClick={()=>{BGM.start("title");setBgmOn(true);}}/><SBtn l="OFF" a={!bgmOn} co="#f44" onClick={()=>{BGM.stop();setBgmOn(false);}}/></div>
+      <div style={{display:"flex",alignItems:"center",gap:4}}><span style={{fontSize:10,color:"#666"}}>SE</span><SBtn l="ON" a={seOn} co="#5f8" onClick={()=>{SE.setEnabled(true);setSeOn(true);}}/><SBtn l="OFF" a={!seOn} co="#f44" onClick={()=>{SE.setEnabled(false);setSeOn(false);}}/></div>
+    </div>
+  </div>;
+
+  // CPU対戦セットアップ
+  if(mode==="cpu") return <div style={{minHeight:"100dvh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:24,background:"linear-gradient(180deg,#080820,#0c0c30)",position:"relative"}}><Stars/><Scan/>
+    <div style={{position:"relative",zIndex:2,display:"flex",flexDirection:"column",alignItems:"center",maxWidth:320,width:"100%"}}>
+      <div style={{fontSize:48,marginBottom:8}}>🤖</div>
+      <h2 style={{fontSize:20,fontWeight:900,color:"#fff",marginBottom:20}}>CPU たいせん</h2>
+      <div style={{fontSize:13,color:"#888",fontWeight:700,marginBottom:8}}>つよさ</div>
+      <div style={{display:"flex",gap:8,marginBottom:24}}>
+        <SBtn l="😊やさしい" a={cpuDiff==="easy"} co="#5f8" onClick={()=>setCpuDiff("easy")}/>
+        <SBtn l="😐ふつう" a={cpuDiff==="normal"} co="#fc3" onClick={()=>setCpuDiff("normal")}/>
+        <SBtn l="😈つよい" a={cpuDiff==="hard"} co="#f44" onClick={()=>setCpuDiff("hard")}/>
+      </div>
+      <div style={{padding:12,background:"#0c0c1a",border:"2px solid #223",width:"100%",marginBottom:20}}>
+        <div style={{fontSize:11,color:"#888",lineHeight:1.8}}>
+          ルール：<br/>
+          ・同じ山札からカードを引き合う<br/>
+          ・交互にがったいモンスターを作る<br/>
+          ・山札がなくなったら合計ATKで勝負！<br/>
+          ・ATKが高いほうが勝ち🏆
+        </div>
+      </div>
+      <Btn onClick={()=>{SE.battleStart();if(BGM.on())BGM.start("battle");onStartCpu(cpuDiff);}} bg="#e65100" style={{padding:"14px 44px",fontSize:18}}>🎮 スタート！</Btn>
+      <button onClick={()=>setMode(null)} style={{marginTop:14,padding:"8px 20px",border:"2px solid #334",background:"transparent",color:"#555",fontSize:12,fontWeight:700}}>← もどる</button>
+    </div>
   </div>;
 
   if(!mode) return <div style={{minHeight:"100dvh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:24,background:"linear-gradient(180deg,#080820,#0c0c30)",position:"relative"}}><Stars/><Scan/>
     <div style={{position:"relative",zIndex:2,display:"flex",flexDirection:"column",alignItems:"center"}}>
       <div style={{animation:"fl 3s ease-in-out infinite",marginBottom:8}}><DrSprite size={80}/></div>
       <h1 style={{fontSize:14,color:"#5cf",textAlign:"center",letterSpacing:".05em",animation:"titleGlow 4s ease-in-out infinite",fontFamily:"'Press Start 2P','DotGothic16',monospace",lineHeight:2}}>げんし<br/>モンスターバトル</h1>
-      <div style={{fontSize:8,color:"#555",marginTop:8,marginBottom:28,fontFamily:"'Press Start 2P',monospace",animation:"pixelStar 2s ease-in-out infinite"}}>- PRESS START -</div>
-      <Btn onClick={()=>setMode("stages")} bg="#c62828" style={{padding:"16px 40px",fontSize:18}}>⚔️ あそぶ</Btn>
+      <div style={{fontSize:8,color:"#555",marginTop:8,marginBottom:24,fontFamily:"'Press Start 2P',monospace",animation:"pixelStar 2s ease-in-out infinite"}}>- PRESS START -</div>
+      <div style={{display:"flex",flexDirection:"column",gap:10,width:"100%",maxWidth:260}}>
+        <Btn onClick={()=>setMode("stages")} bg="#c62828" style={{width:"100%",padding:"14px",fontSize:16,display:"flex",alignItems:"center",gap:8,justifyContent:"center"}}><BossSprite id={1} size={28}/> ストーリー</Btn>
+        <Btn onClick={()=>setMode("cpu")} bg="#e65100" style={{width:"100%",padding:"14px",fontSize:16}}>🤖 CPU たいせん</Btn>
+      </div>
       <SettingsPanel/>
       <div style={{marginTop:20,display:"flex",gap:6,opacity:.5}}>{[1,3,5,7,10].map(id=><div key={id} style={{animation:`fl ${2+id*.3}s ease-in-out infinite`}}><BossSprite id={id} size={28}/></div>)}</div>
     </div>
@@ -544,12 +615,122 @@ const BattlePhase=({army,stage,onResult})=>{
 };
 
 /* ═══════════════════════════════════════════════════════════
+   🤖 CPU AI
+   ═══════════════════════════════════════════════════════════ */
+const cpuPickBond=(hand,diff)=>{const p=findP(hand);if(!p.length)return null;if(diff==="easy"){if(Math.random()<.5)return null;return[...p].sort((a,b)=>a.atk-b.atk)[0];}if(diff==="normal"){if(Math.random()<.2)return null;const s=[...p].sort((a,b)=>b.atk-a.atk);return s[0|s.length/2]||s[0];}return[...p].sort((a,b)=>b.atk-a.atk)[0];};
+const cpuPickCards=(hand,comp)=>{const n={...comp.a},ids=[];for(const c of hand)if(n[c.s]>0){ids.push(c.id);n[c.s]--;}return ids;};
+
+/* ═══════════════════════════════════════════════════════════
+   🤖 CPU対戦フェーズ
+   ═══════════════════════════════════════════════════════════ */
+const CpuBattle=({diff,onResult})=>{
+  const cn=useCN();
+  const[deck,setDeck]=useState(()=>buildDeck(50));
+  const[myHand,setMyHand]=useState([]);const[cpuHand,setCpuHand]=useState([]);
+  const[myArmy,setMyArmy]=useState([]);const[cpuArmy,setCpuArmy]=useState([]);
+  const[sel,setSel]=useState(new Set());const[drew,setDrew]=useState(false);const[drawnC,setDrawnC]=useState(null);
+  const[justFused,setJustFused]=useState(null);const[showList,setShowList]=useState(false);const[peeked,setPeeked]=useState(false);
+  const[cpuMsg,setCpuMsg]=useState(null);const[phase,setPhase]=useState("play");const[turn,setTurn]=useState("player");
+  const hl=8;const myAtk=myArmy.reduce((s,m)=>s+m.atk,0);const cpuAtk=cpuArmy.reduce((s,m)=>s+m.atk,0);
+  useEffect(()=>{const d=[...deck],mh=[],ch=[];for(let i=0;i<3;i++){if(d.length>0)mh.push(d.pop());if(d.length>0)ch.push(d.pop());}setDeck(d);setMyHand(mh);setCpuHand(ch);},[]);
+  const selCards=myHand.filter(c=>sel.has(c.id));const selCnt=cntA(selCards);
+  const match=COMPOUNDS.find(c=>Object.entries(c.a).every(([s,n])=>(selCnt[s]||0)===n)&&Object.entries(selCnt).every(([s,n])=>(c.a[s]||0)===n));
+  const possible=findP(myHand);const overLimit=myHand.length>hl;const hc=cntA(myHand);
+  const toggle=card=>{setSel(p=>{const n=new Set(p);if(n.has(card.id)){n.delete(card.id);SE.deselect();}else{n.add(card.id);SE.select();}return n;});};
+  const doDraw=()=>{if(deck.length===0||drew)return;const nd=[...deck],dr=nd.pop();setDeck(nd);setMyHand(h=>[...h,dr]);setDrew(true);setDrawnC(dr);SE.draw();};
+  const doFuse=()=>{if(!match)return;const mult=peeked?1:1.5;const boosted=mult>1?{...match,atk:Math.round(match.atk*mult),boosted:true}:match;const ids=new Set(sel);setMyHand(h=>h.filter(c=>!ids.has(c.id)));setMyArmy(a=>[...a,boosted]);setSel(new Set());setJustFused(boosted);SE.fuse(boosted.atk);setTimeout(()=>setJustFused(null),1500);};
+  const doDiscard=cid=>{setMyHand(h=>h.filter(c=>c.id!==cid));SE.discard();};
+  const doPass=()=>{SE.pass();setDrew(false);setDrawnC(null);setTurn("cpu");setTimeout(()=>runCpu(),800);};
+  const runCpu=()=>{setDeck(pd=>{const nd=[...pd];if(!nd.length){setTimeout(()=>setPhase("result"),500);return nd;}const dr=nd.pop();setCpuHand(h=>{const nh=[...h,dr];setTimeout(()=>{const bond=cpuPickBond(nh,diff);if(bond){const ids=new Set(cpuPickCards(nh,bond));setCpuHand(ch=>ch.filter(c=>!ids.has(c.id)));setCpuArmy(a=>[...a,bond]);setCpuMsg({action:"bond",comp:bond});SE.fuse(bond.atk);}else{setCpuMsg({action:"pass"});SE.pass();}setTimeout(()=>{setCpuMsg(null);setTurn("player");setDrew(false);setDrawnC(null);if(!nd.length)setTimeout(()=>setPhase("result"),500);},1200);},600);return nh;});return nd;});};
+
+  if(phase==="result"){const won=myAtk>cpuAtk,tie=myAtk===cpuAtk;
+    return <div style={{minHeight:"100dvh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:24,background:"linear-gradient(180deg,#080820,#0c0c30)",position:"relative"}}><Stars/><Scan/>
+      <div style={{position:"relative",zIndex:2,textAlign:"center",maxWidth:320,width:"100%"}}>
+        <div style={{fontSize:64,animation:"ca .5s ease both"}}>{won?"🏆":tie?"🤝":"😢"}</div>
+        <div style={{fontSize:20,fontWeight:900,color:won?"#fc3":tie?"#aaa":"#666",marginTop:8,fontFamily:"'Press Start 2P','DotGothic16',monospace"}}>{won?"勝利！":tie?"引き分け！":"敗北…"}</div>
+        <div style={{display:"flex",justifyContent:"center",gap:20,marginTop:16}}>
+          <div style={{textAlign:"center"}}><div style={{fontSize:11,color:"#5cf"}}>きみ</div><div style={{fontSize:28,fontWeight:900,color:won?"#5f8":"#888"}}>{myAtk}</div></div>
+          <div style={{fontSize:20,color:"#555",alignSelf:"center"}}>vs</div>
+          <div style={{textAlign:"center"}}><div style={{fontSize:11,color:"#f93"}}>CPU</div><div style={{fontSize:28,fontWeight:900,color:!won&&!tie?"#f44":"#888"}}>{cpuAtk}</div></div>
+        </div>
+        {myArmy.length>0&&<div style={{marginTop:12}}><div style={{fontSize:10,color:"#5cf",marginBottom:4}}>きみ</div><div style={{display:"flex",flexWrap:"wrap",gap:3,justifyContent:"center"}}>{myArmy.map((m,i)=><MBadge key={i} comp={m}/>)}</div></div>}
+        {cpuArmy.length>0&&<div style={{marginTop:8}}><div style={{fontSize:10,color:"#f93",marginBottom:4}}>CPU</div><div style={{display:"flex",flexWrap:"wrap",gap:3,justifyContent:"center"}}>{cpuArmy.map((m,i)=><MBadge key={i} comp={m}/>)}</div></div>}
+        <div style={{display:"flex",flexDirection:"column",gap:8,marginTop:20}}>
+          <Btn onClick={()=>onResult("retry")} bg="#e65100" style={{width:"100%",fontSize:14}}>🔄 もういちど</Btn>
+          <Btn onClick={()=>onResult("home")} bg="#334" style={{width:"100%",fontSize:13}}>🏠 トップへ</Btn>
+        </div>
+      </div></div>;
+  }
+
+  return <div style={{minHeight:"100dvh",display:"flex",flexDirection:"column",background:"linear-gradient(180deg,#080820,#0c0c30)"}}>
+    {justFused&&<div style={{position:"fixed",inset:0,zIndex:9999,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",background:"rgba(6,6,18,.95)",animation:"fadeIn .2s ease"}}>
+      {COMP_PIXELS[justFused.k]?<div style={{animation:"ca .4s ease both",filter:"drop-shadow(0 8px 30px rgba(80,255,128,.5))"}}><CompSprite k={justFused.k} size={140}/></div>:<div style={{fontSize:80,animation:"ca .4s ease both"}}>{justFused.emoji}</div>}
+      <div style={{fontSize:18,fontWeight:900,color:"#fff",marginTop:8,animation:"su .4s .2s ease both",opacity:0}}>{cn(justFused)}</div>
+      <div style={{fontSize:32,fontWeight:900,color:"#fc3",marginTop:8,animation:"su .4s .4s ease both",opacity:0}}>ATK {justFused.atk}</div>
+      {justFused.boosted&&<div style={{marginTop:6,fontSize:13,color:"#fc3",fontWeight:900,animation:"su .3s .6s ease both",opacity:0}}>🧠 ×1.5！</div>}
+    </div>}
+    {cpuMsg&&<div style={{position:"fixed",inset:0,zIndex:9998,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(6,6,18,.9)",animation:"fadeIn .2s ease"}}><div style={{textAlign:"center",animation:"ca .3s ease both"}}>
+      <div style={{fontSize:48,marginBottom:8}}>🤖</div><div style={{fontSize:16,fontWeight:900,color:"#f93"}}>CPUのターン</div>
+      {cpuMsg.action==="bond"&&<><div style={{fontSize:14,color:"#5f8",marginTop:8}}>がったい！</div><div style={{fontSize:32,marginTop:4}}>{cpuMsg.comp.emoji}</div><div style={{fontSize:16,fontWeight:900,color:"#fff"}}>{cn(cpuMsg.comp)}</div><div style={{fontSize:14,color:"#fc3",fontWeight:900}}>+{cpuMsg.comp.atk}</div></>}
+      {cpuMsg.action==="pass"&&<div style={{fontSize:14,color:"#888",marginTop:8}}>パス…</div>}
+    </div></div>}
+
+    <div style={{padding:"max(12px,env(safe-area-inset-top)) 14px 10px",display:"flex",justifyContent:"space-between",alignItems:"center",borderBottom:"1px solid #222",background:"rgba(8,8,32,.9)"}}>
+      <div style={{display:"flex",alignItems:"center",gap:8}}>
+        <button onClick={()=>{if(window.confirm("やめる？")){BGM.stop();onResult("home");}}} style={{padding:"3px 8px",border:"1px solid #333",background:"transparent",color:"#555",fontSize:9}}>やめる</button>
+        <span style={{fontSize:12,fontWeight:900,color:turn==="player"?"#5cf":"#f93"}}>{turn==="player"?"きみ":"CPU"}</span>
+      </div>
+      <div style={{display:"flex",gap:10}}><div style={{textAlign:"center"}}><div style={{fontSize:7,color:"#555"}}>やま</div><div style={{fontSize:14,fontWeight:900,color:deck.length>10?"#5cf":"#f44"}}>{deck.length}</div></div>
+        <div style={{textAlign:"center"}}><div style={{fontSize:7,color:"#5cf"}}>きみ</div><div style={{fontSize:14,fontWeight:900,color:"#5f8"}}>{myAtk}</div></div>
+        <div style={{textAlign:"center"}}><div style={{fontSize:7,color:"#f93"}}>CPU</div><div style={{fontSize:14,fontWeight:900,color:"#f44"}}>{cpuAtk}</div></div>
+      </div>
+    </div>
+
+    {(myArmy.length>0||cpuArmy.length>0)&&<div style={{padding:"4px 10px",background:"#0a0a18",borderBottom:"1px solid #181828",display:"flex",flexDirection:"column",gap:2}}>
+      {myArmy.length>0&&<div style={{display:"flex",flexWrap:"wrap",gap:3,alignItems:"center"}}><span style={{fontSize:8,color:"#5cf",fontWeight:700}}>きみ:</span>{myArmy.map((m,i)=><MBadge key={`m${i}`} comp={m}/>)}</div>}
+      {cpuArmy.length>0&&<div style={{display:"flex",flexWrap:"wrap",gap:3,alignItems:"center"}}><span style={{fontSize:8,color:"#f93",fontWeight:700}}>CPU:</span>{cpuArmy.map((m,i)=><MBadge key={`c${i}`} comp={m}/>)}</div>}
+    </div>}
+
+    {drawnC&&<div style={{padding:"6px 14px",display:"flex",alignItems:"center",gap:8,background:"rgba(80,180,255,.05)",borderBottom:"1px solid #182838",animation:"su .3s ease"}}><span style={{fontSize:11,color:"#5cf"}}>ひいた→</span><AtomCard card={drawnC}/></div>}
+    {overLimit&&<div style={{padding:"6px 14px",textAlign:"center",background:"rgba(255,50,50,.06)"}}><span style={{fontSize:12,color:"#f44",fontWeight:800}}>⚠️ {hl}まいオーバー！</span></div>}
+    {!peeked&&<div style={{padding:"4px 14px",background:"rgba(255,200,50,.04)",textAlign:"center"}}><span style={{fontSize:10,color:"#fc3",fontWeight:800}}>🧠 リストを見ずに → ×1.5！</span></div>}
+
+    <div style={{flex:1,padding:"10px",overflowY:"auto"}}>
+      <div style={{fontSize:11,color:"#555",marginBottom:6}}>🃏 てふだ ({myHand.length})</div>
+      <div style={{display:"flex",flexWrap:"wrap",gap:5,justifyContent:"center"}}>{[...myHand].sort((a,b)=>"H O C N S Cl Na Cu Ag Fe".split(" ").indexOf(a.s)-"H O C N S Cl Na Cu Ag Fe".split(" ").indexOf(b.s)).map(c=><div key={c.id} style={{position:"relative"}}><AtomCard card={c} sel={sel.has(c.id)} onTap={turn==="player"?toggle:undefined}/>{overLimit&&<button onClick={()=>doDiscard(c.id)} style={{position:"absolute",top:-6,right:-6,width:20,height:20,border:"none",background:"#f44",color:"#fff",fontSize:12,fontWeight:900,display:"flex",alignItems:"center",justifyContent:"center",zIndex:2}}>×</button>}</div>)}</div>
+
+      {match&&!justFused&&turn==="player"&&<div style={{marginTop:14,padding:14,background:peeked?"rgba(80,255,128,.04)":"rgba(255,200,50,.06)",border:peeked?"2px solid rgba(80,255,128,.2)":"2px solid rgba(255,200,50,.3)",textAlign:"center",animation:"ca .3s ease"}}>
+        <div style={{fontSize:11,color:peeked?"#5f8":"#fc3",fontWeight:700}}>がったいできる！{!peeked&&" 🧠×1.5"}</div>
+        {COMP_PIXELS[match.k]?<CompSprite k={match.k} size={64}/>:<div style={{fontSize:36}}>{match.emoji}</div>}
+        <div style={{fontSize:14,fontWeight:900,color:"#fff"}}>{cn(match)}</div>
+        <div style={{fontSize:18,fontWeight:900,color:peeked?"#5f8":"#fc3"}}>ATK {peeked?match.atk:Math.round(match.atk*1.5)}</div>
+        <Btn onClick={doFuse} bg={peeked?"#228833":"#cc8800"} style={{marginTop:8,padding:"10px 30px",fontSize:15}}>🔗 がったい！</Btn>
+      </div>}
+
+      <div style={{marginTop:6}}><button onClick={()=>{const next=!showList;setShowList(next);if(next)setPeeked(true);SE.tap();}} style={{width:"100%",padding:8,border:"2px solid #223",background:"#0e0e1e",color:"#555",fontSize:11,fontWeight:700}}>📋 {showList?"とじる":"リスト"}{!peeked&&<span style={{color:"#fc3",marginLeft:4,fontSize:9}}>※×1.5消滅</span>}</button>
+        {showList&&<div style={{marginTop:4,padding:8,background:"#0c0c1a",border:"2px solid #222",maxHeight:250,overflowY:"auto",animation:"su .2s ease"}}>
+          {possible.length>0&&<div style={{marginBottom:6}}><div style={{fontSize:10,color:"#5f8",fontWeight:900,marginBottom:3}}>🟢 いまつくれる</div>{possible.map(c=><div key={c.k} style={{padding:"4px 6px",marginBottom:2,background:"rgba(80,255,128,.03)",border:"1px solid rgba(80,255,128,.1)",display:"flex",justifyContent:"space-between",alignItems:"center"}}><span style={{fontSize:10}}>{c.emoji} {cn(c)} <span style={{color:"#666",fontSize:8}}>{c.f}</span></span><span style={{fontSize:9,fontWeight:900,color:"#000",background:"#5f8",padding:"1px 4px"}}>{c.atk}</span></div>)}</div>}
+          {[...COMPOUNDS].sort((a,b)=>a.atk-b.atk).map(c=>{const ok=Object.entries(c.a).every(([s,n])=>(hc[s]||0)>=n);return <div key={c.k} style={{padding:"3px 4px",marginBottom:2,background:ok?"rgba(80,255,128,.03)":"#0a0a14",border:ok?"1px solid rgba(80,255,128,.1)":"1px solid #181828",display:"flex",justifyContent:"space-between",alignItems:"center",opacity:ok?1:.5}}><span style={{fontSize:9}}>{c.emoji} {cn(c)} <span style={{color:"#555",fontSize:7}}>{c.f}</span></span><span style={{fontSize:8,fontWeight:900,color:ok?"#000":"#555",background:ok?"#5f8":"#222",padding:"1px 4px"}}>{c.atk}</span></div>;})}
+        </div>}
+      </div>
+    </div>
+
+    {turn==="player"&&<div style={{padding:"10px 14px max(20px,env(safe-area-inset-bottom))",borderTop:"1px solid #222",display:"flex",gap:8,background:"rgba(8,8,32,.97)"}}>
+      {deck.length>0&&!drew&&<Btn onClick={doDraw} bg="#2244aa" style={{flex:1,padding:14,fontSize:16}}>🃏 ひく</Btn>}
+      {deck.length>0&&drew&&!overLimit&&<Btn onClick={doPass} bg="#445566" style={{flex:1,padding:14,fontSize:13}}>{possible.length>0?"🔬 パス":"➡️ つぎへ"}</Btn>}
+      {deck.length===0&&<Btn onClick={()=>setPhase("result")} bg="#c62828" style={{flex:1,padding:14,fontSize:16}}>🏁 けっか！</Btn>}
+    </div>}
+  </div>;
+};
+
+/* ═══════════════════════════════════════════════════════════
    App
    ═══════════════════════════════════════════════════════════ */
 window.__App=function App(){
   const[scr,setScr]=useState("title");
   const[stage,setStage]=useState(null);
   const[army,setArmy]=useState([]);
+  const[cpuDiff,setCpuDiff]=useState("normal");
   const[lang,setLang]=useState(()=>{try{return localStorage.getItem("acb_lang")||"hiragana";}catch(e){return "hiragana";}});
   const[cleared,setCleared]=useState(()=>{try{const s=localStorage.getItem("acb_cleared");return s?new Set(JSON.parse(s)):new Set();}catch(e){return new Set();}});
   const[prologueDone,setPrologueDone]=useState(()=>{try{return localStorage.getItem("acb_prologue")==="1";}catch(e){return false;}});
@@ -558,18 +739,22 @@ window.__App=function App(){
   const saveCleared=c=>{setCleared(c);try{localStorage.setItem("acb_cleared",JSON.stringify([...c]));}catch(e){}};
   const savePrologue=()=>{setPrologueDone(true);try{localStorage.setItem("acb_prologue","1");}catch(e){}};
 
-  const startStage=st=>{setStage(st);setArmy([]);setScr("card");};
+  const startStage=st=>{setStage(st);setArmy([]);setScr("card");if(BGM.on())BGM.start(st.diff==="hard"?"battle_hard":"battle");};
   const onCardDone=a=>{setArmy(a);setScr("battle");};
   const onBattleResult=(won,action)=>{
     if(won&&stage){const nc=new Set([...cleared,stage.id]);saveCleared(nc);}
     if(action==="next"){const next=STAGES.find(s=>s.id===stage.id+1);if(next){startStage(next);return;}}
     if(action==="retry"){startStage(stage);return;}
-    setScr("title");
+    setScr("title");if(BGM.on())BGM.start("title");
   };
+  const startCpu=d=>{setCpuDiff(d);setScr("cpu");};
+  const onCpuResult=action=>{if(action==="retry"){setScr("cpu");return;}setScr("title");if(BGM.on())BGM.start("title");};
 
   return <LangCtx.Provider value={lang}><style>{CSS}</style>
-    {scr==="title"&&<TitleScreen onSelectStage={startStage} cleared={cleared} prologueDone={prologueDone} setPrologueDone={savePrologue} lang={lang} setLang={saveLang}/>}
+    <BgmBtn/>
+    {scr==="title"&&<TitleScreen onSelectStage={startStage} onStartCpu={startCpu} cleared={cleared} prologueDone={prologueDone} setPrologueDone={savePrologue} lang={lang} setLang={saveLang}/>}
     {scr==="card"&&stage&&<CardPhase stage={stage} onDone={onCardDone}/>}
     {scr==="battle"&&stage&&<BattlePhase army={army} stage={stage} onResult={onBattleResult}/>}
+    {scr==="cpu"&&<CpuBattle diff={cpuDiff} onResult={onCpuResult}/>}
   </LangCtx.Provider>;
 };
