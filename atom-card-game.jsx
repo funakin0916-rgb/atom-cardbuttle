@@ -206,6 +206,8 @@ button:active{transform:scale(.93)!important}
 @keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeScale{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
 @keyframes pulseRing{0%{transform:scale(.8);opacity:0}40%{opacity:1}100%{transform:scale(1.4);opacity:0}}
+@keyframes fw{0%{transform:scale(0);opacity:1}50%{opacity:1}100%{transform:scale(1);opacity:0}}
+@keyframes cf{0%{transform:translateY(-20px);opacity:0}10%{opacity:.8}90%{opacity:.8}100%{transform:translateY(100vh);opacity:0}}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:rgba(80,180,255,.2)}
 `;
 
@@ -606,7 +608,7 @@ const BattlePhase=({army,stage,onResult})=>{
         </>}
         <div style={{display:"flex",flexDirection:"column",gap:8,marginTop:20,width:"100%",maxWidth:260}}>
           {won&&STAGES.find(s=>s.id===stage.id+1)&&<Btn onClick={()=>onResult(won,"nextPreview")} bg="#c62828" style={{width:"100%",fontSize:14}}>▶ つぎのてきを見る</Btn>}
-          {won&&!STAGES.find(s=>s.id===stage.id+1)&&<div style={{padding:"10px",border:"2px solid rgba(255,200,50,.2)",background:"rgba(255,200,50,.04)",textAlign:"center"}}><span style={{fontSize:13,color:"#fc3",fontWeight:900}}>🏆 ぜんステージクリア！</span></div>}
+          {won&&!STAGES.find(s=>s.id===stage.id+1)&&<Btn onClick={()=>onResult(won,"ending")} bg="#ffd600" style={{width:"100%",fontSize:16,color:"#000"}}>🌟 エンディングへ</Btn>}
           <Btn onClick={()=>onResult(won,"retry")} bg="#e65100" style={{width:"100%",fontSize:13}}>🔄 もういちど</Btn>
           <Btn onClick={()=>onResult(won,"home")} bg="#334" style={{width:"100%",fontSize:13}}>🏠 トップへ</Btn>
         </div>
@@ -725,6 +727,101 @@ const CpuBattle=({diff,onResult})=>{
 };
 
 /* ═══════════════════════════════════════════════════════════
+   🌟 エンディング — 盛大な演出
+   ═══════════════════════════════════════════════════════════ */
+const Ending=({onHome})=>{
+  const cn=useCN();
+  const[ph,setPh]=useState(0);
+
+  useEffect(()=>{
+    BGM.stop();
+    const t=[];
+    t.push(setTimeout(()=>setPh(1),800));
+    t.push(setTimeout(()=>{setPh(2);SE.victory();},4000));
+    t.push(setTimeout(()=>setPh(3),9000));
+    t.push(setTimeout(()=>setPh(4),18500));
+    t.push(setTimeout(()=>setPh(5),22500));
+    return ()=>t.forEach(clearTimeout);
+  },[]);
+
+  const fw=useRef(Array.from({length:60},(_,i)=>({id:i,x:Math.random()*100,y:10+Math.random()*50,dl:.5+Math.random()*8,sz:30+Math.random()*50,co:["#f44","#fc3","#5f8","#5cf","#c9f","#f93","#ff1744","#00e5ff","#ffd600"][i%9]}))).current;
+  const conf=useRef(Array.from({length:50},(_,i)=>({id:i,x:Math.random()*100,dl:Math.random()*6,dur:2+Math.random()*4,co:["#f44","#fc3","#5f8","#5cf","#c9f","#f93"][i%6],sz:4+Math.random()*6}))).current;
+  const allBosses=STAGES.map(s=>({id:s.bossId,name:s.bossName,emoji:s.bossEmoji,color:s.bossColor}));
+  const topComps=[...COMPOUNDS].sort((a,b)=>b.atk-a.atk).slice(0,10);
+
+  return <div style={{minHeight:"100dvh",display:"flex",flexDirection:"column",alignItems:"center",position:"relative",overflow:"hidden",background:"linear-gradient(180deg,#040410,#080820,#040410)"}}>
+    <Stars n={50}/>
+    {ph>=1&&fw.map(f=><div key={f.id} style={{position:"fixed",left:`${f.x}%`,top:`${f.y}%`,width:f.sz,height:f.sz,borderRadius:"50%",border:`2px solid ${f.co}`,opacity:0,animation:`fw 1.5s ${f.dl}s ease-out infinite`,boxShadow:`0 0 20px ${f.co}`,zIndex:4,pointerEvents:"none"}}/>)}
+    {ph>=3&&conf.map(c=><div key={c.id} style={{position:"fixed",left:`${c.x}%`,top:-20,width:c.sz,height:c.sz*1.4,background:c.co,opacity:0,animation:`cf ${c.dur}s ${c.dl}s linear infinite`,zIndex:5,pointerEvents:"none"}}/>)}
+
+    <div style={{position:"relative",zIndex:10,display:"flex",flexDirection:"column",alignItems:"center",width:"100%",maxWidth:340,padding:"max(40px,env(safe-area-inset-top)) 24px 40px"}}>
+
+      {ph>=1&&ph<2&&<div style={{textAlign:"center",animation:"ca .8s ease both"}}>
+        <div style={{fontSize:14,color:"#f44",fontWeight:900,letterSpacing:".2em",marginBottom:16,fontFamily:"'Press Start 2P','DotGothic16',monospace"}}>FINAL BOSS DEFEATED</div>
+        <div style={{opacity:.4,filter:"brightness(2) saturate(0)",animation:"shake .5s ease"}}><BossSprite id={10} size={140}/></div>
+        <div style={{fontSize:28,fontWeight:900,color:"#ff1744",marginTop:12,textShadow:"0 0 30px #f00",animation:"ca .5s .5s ease both",opacity:0}}>💥 💎 💥</div>
+      </div>}
+
+      {ph>=2&&ph<3&&<div style={{textAlign:"center",animation:"fadeIn 1s ease both"}}>
+        <div style={{animation:"fl 2s ease-in-out infinite",marginBottom:16}}><DrSprite size={140}/></div>
+        <div style={{padding:16,background:"rgba(8,8,32,.92)",border:"3px solid rgba(255,200,50,.3)",boxShadow:"0 0 40px rgba(255,200,50,.1)",maxWidth:300,animation:"su .8s .5s ease both",opacity:0}}>
+          <p style={{fontSize:15,color:"#fc3",lineHeight:2.2,textAlign:"center",fontWeight:600,margin:0}}>
+            博士「ついにやったな…！<br/>
+            すべてのモンスターを倒した！<br/><br/>
+            キミのおかげで研究所に<br/>
+            平和がもどったぞ！<br/><br/>
+            キミは…<br/>
+            真の<span style={{fontSize:20,color:"#ffd600"}}>化学マスター</span>じゃ！」
+          </p>
+        </div>
+        <div style={{marginTop:12,fontSize:40,animation:"ca .5s 2s ease both",opacity:0}}>🎉🎊🏆🎊🎉</div>
+      </div>}
+
+      {ph>=3&&ph<4&&<div style={{textAlign:"center",width:"100%",animation:"fadeIn .8s ease both"}}>
+        <div style={{fontSize:12,color:"#fc3",fontWeight:900,letterSpacing:".1em",marginBottom:16,fontFamily:"'Press Start 2P','DotGothic16',monospace"}}>ALL MONSTERS</div>
+        <div style={{fontSize:10,color:"#f44",fontWeight:700,marginBottom:8}}>— ボスモンスター —</div>
+        <div style={{display:"flex",flexDirection:"column",gap:6,marginBottom:16}}>
+          {allBosses.map((b,i)=><div key={b.id} style={{display:"flex",alignItems:"center",gap:10,padding:"6px 10px",background:`${b.color}08`,border:`1px solid ${b.color}33`,animation:`slideRight .5s ${i*.3}s ease both`,opacity:0}}>
+            <BossSprite id={b.id} size={36}/>
+            <span style={{fontSize:12,fontWeight:900,color:b.color,flex:1}}>{b.emoji} {b.name}</span>
+            <span style={{fontSize:14,color:"#5f8"}}>✓</span>
+          </div>)}
+        </div>
+        <div style={{fontSize:10,color:"#5f8",fontWeight:700,marginBottom:8}}>— がったいモンスター TOP10 —</div>
+        <div style={{display:"flex",flexDirection:"column",gap:3}}>
+          {topComps.map((c,i)=><div key={c.k} style={{display:"flex",alignItems:"center",gap:6,padding:"3px 8px",background:"rgba(80,255,128,.03)",border:"1px solid rgba(80,255,128,.08)",animation:`slideRight .4s ${3+i*.2}s ease both`,opacity:0}}>
+            {COMP_PIXELS[c.k]?<CompSprite k={c.k} size={24}/>:<span style={{fontSize:16}}>{c.emoji}</span>}
+            <span style={{fontSize:10,fontWeight:700,color:"#ccc",flex:1}}>{cn(c)}</span>
+            <span style={{fontSize:10,fontWeight:900,color:"#fc3"}}>{c.atk}</span>
+          </div>)}
+        </div>
+      </div>}
+
+      {ph>=4&&<div style={{textAlign:"center",animation:"ca 1s ease both",marginTop:ph>=5?0:60}}>
+        <div style={{fontSize:60,marginBottom:12,filter:"drop-shadow(0 8px 40px rgba(255,200,50,.5))",animation:"fl 2s ease-in-out infinite"}}>🧪</div>
+        <h1 style={{fontSize:18,color:"#5cf",letterSpacing:".08em",fontFamily:"'Press Start 2P','DotGothic16',monospace",lineHeight:2,textShadow:"0 0 20px rgba(80,180,255,.5)",animation:"titleGlow 3s ease-in-out infinite"}}>げんし<br/>モンスターバトル</h1>
+        <div style={{marginTop:12,fontSize:18,color:"#fc3",fontWeight:900,animation:"su .5s .5s ease both",opacity:0,fontFamily:"'Press Start 2P','DotGothic16',monospace"}}>COMPLETE!</div>
+        <div style={{marginTop:16,display:"flex",justifyContent:"center",gap:4}}>
+          {ATOMS.map((a,i)=><div key={a.s} style={{animation:`fl ${1.5+i*.2}s ease-in-out infinite`}}><AtomSprite s={a.s} size={24}/></div>)}
+        </div>
+        <div style={{marginTop:16,fontSize:11,color:"#888",animation:"su .5s 1s ease both",opacity:0}}>おめでとう！ぜんステージクリア！<br/>化学の力でせかいを救った！</div>
+      </div>}
+
+      {ph>=5&&<div style={{textAlign:"center",marginTop:24,animation:"su .8s ease both",width:"100%"}}>
+        <div style={{padding:12,background:"rgba(255,255,255,.02)",border:"1px solid rgba(255,255,255,.06)",marginBottom:16}}>
+          <div style={{fontSize:9,color:"#555",lineHeight:2}}>
+            PRODUCED BY<br/><span style={{color:"#888",fontSize:11}}>げんしモンスターバトル制作チーム</span><br/><br/>
+            SPECIAL THANKS<br/><span style={{color:"#888",fontSize:11}}>ゲンシ博士 & すべてのモンスターたち</span><br/><br/>
+            AND YOU!<br/><span style={{color:"#fc3",fontSize:13,fontWeight:900}}>プレイしてくれてありがとう！</span>
+          </div>
+        </div>
+        <Btn onClick={()=>{SE.victory();onHome();}} bg="#3355cc" style={{width:"100%",padding:"14px",fontSize:16}}>🏠 タイトルへもどる</Btn>
+      </div>}
+    </div>
+  </div>;
+};
+
+/* ═══════════════════════════════════════════════════════════
    📢 次のボス紹介画面
    ═══════════════════════════════════════════════════════════ */
 const NextBossPreview=({nextStage,onFight,onHome})=>{
@@ -809,6 +906,7 @@ window.__App=function App(){
       const next=STAGES.find(s=>s.id===stage.id+1);
       if(next){setNextStage(next);setScr("nextPreview");if(BGM.on())BGM.start("title");return;}
     }
+    if(action==="ending"){setScr("ending");return;}
     if(action==="retry"){startStage(stage);return;}
     setScr("title");if(BGM.on())BGM.start("title");
   };
@@ -821,6 +919,7 @@ window.__App=function App(){
     {scr==="card"&&stage&&<CardPhase stage={stage} onDone={onCardDone}/>}
     {scr==="battle"&&stage&&<BattlePhase army={army} stage={stage} onResult={onBattleResult}/>}
     {scr==="nextPreview"&&nextStage&&<NextBossPreview nextStage={nextStage} onFight={()=>startStage(nextStage)} onHome={()=>{setScr("title");if(BGM.on())BGM.start("title");}}/>}
+    {scr==="ending"&&<Ending onHome={()=>{setScr("title");if(BGM.on())BGM.start("title");}}/>}
     {scr==="cpu"&&<CpuBattle diff={cpuDiff} onResult={onCpuResult}/>}
   </LangCtx.Provider>;
 };
