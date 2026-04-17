@@ -605,7 +605,8 @@ const BattlePhase=({army,stage,onResult})=>{
           <div style={{fontSize:12,color:"#555",marginTop:8}}>ATK {totalAtk} — あと {stage.bossHp-totalAtk}</div>
         </>}
         <div style={{display:"flex",flexDirection:"column",gap:8,marginTop:20,width:"100%",maxWidth:260}}>
-          {won&&STAGES.find(s=>s.id===stage.id+1)&&<Btn onClick={()=>onResult(won,"next")} bg="#c62828" style={{width:"100%",fontSize:14}}>▶ つぎへ</Btn>}
+          {won&&STAGES.find(s=>s.id===stage.id+1)&&<Btn onClick={()=>onResult(won,"nextPreview")} bg="#c62828" style={{width:"100%",fontSize:14}}>▶ つぎのてきを見る</Btn>}
+          {won&&!STAGES.find(s=>s.id===stage.id+1)&&<div style={{padding:"10px",border:"2px solid rgba(255,200,50,.2)",background:"rgba(255,200,50,.04)",textAlign:"center"}}><span style={{fontSize:13,color:"#fc3",fontWeight:900}}>🏆 ぜんステージクリア！</span></div>}
           <Btn onClick={()=>onResult(won,"retry")} bg="#e65100" style={{width:"100%",fontSize:13}}>🔄 もういちど</Btn>
           <Btn onClick={()=>onResult(won,"home")} bg="#334" style={{width:"100%",fontSize:13}}>🏠 トップへ</Btn>
         </div>
@@ -724,6 +725,66 @@ const CpuBattle=({diff,onResult})=>{
 };
 
 /* ═══════════════════════════════════════════════════════════
+   📢 次のボス紹介画面
+   ═══════════════════════════════════════════════════════════ */
+const NextBossPreview=({nextStage,onFight,onHome})=>{
+  const[show,setShow]=useState(false);
+  useEffect(()=>{setTimeout(()=>setShow(true),300);},[]);
+  return <div style={{minHeight:"100dvh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:24,background:`radial-gradient(ellipse at 50% 30%,${nextStage.bossColor}15,transparent 60%),linear-gradient(180deg,#080820,#0c0c30)`,position:"relative"}}><Stars n={20}/><Scan/>
+    <div style={{position:"relative",zIndex:2,display:"flex",flexDirection:"column",alignItems:"center",maxWidth:320,width:"100%"}}>
+      {/* 次のてき！ヘッダー */}
+      <div style={{fontSize:14,color:"#f44",fontWeight:900,letterSpacing:".15em",marginBottom:16,fontFamily:"'Press Start 2P','DotGothic16',monospace",animation:"pg 1.5s ease-in-out infinite","--g":"rgba(255,50,50,.4)"}}>NEXT ENEMY</div>
+
+      {/* ボスドット絵（大きく登場） */}
+      {show&&<div style={{position:"relative",marginBottom:12,animation:"ca .8s cubic-bezier(.34,1.56,.64,1) both"}}>
+        <div style={{filter:`drop-shadow(0 12px 50px ${nextStage.bossColor}88)`,animation:"fl 3s ease-in-out infinite"}}>
+          <BossSprite id={nextStage.bossId} size={180}/>
+        </div>
+        <div style={{position:"absolute",inset:"-40px",borderRadius:"50%",background:`radial-gradient(circle,${nextStage.bossColor}22,transparent 70%)`,zIndex:-1,animation:"pulseRing 3s ease-in-out infinite"}}/>
+      </div>}
+
+      {/* 名前・ステージ */}
+      {show&&<>
+        <div style={{fontSize:10,color:nextStage.bossColor,fontWeight:700,animation:"su .4s .3s ease both",opacity:0}}>ステージ {nextStage.id} — {nextStage.name}</div>
+        <h2 style={{fontSize:22,fontWeight:900,color:"#fff",marginTop:4,textShadow:`0 0 16px ${nextStage.bossColor}66`,fontFamily:"'Press Start 2P','DotGothic16',monospace",animation:"su .4s .5s ease both",opacity:0}}>{nextStage.bossEmoji} {nextStage.bossName}</h2>
+        <div style={{fontSize:12,color:"#888",marginTop:4,animation:"su .4s .7s ease both",opacity:0}}>{nextStage.bossDesc}</div>
+
+        {/* ステータス */}
+        <div style={{display:"flex",gap:12,marginTop:14,animation:"su .4s .9s ease both",opacity:0}}>
+          <div style={{padding:"8px 14px",background:"#0e0e1e",border:`2px solid ${nextStage.bossColor}33`,textAlign:"center"}}>
+            <div style={{fontSize:9,color:"#555"}}>HP</div>
+            <div style={{fontSize:20,fontWeight:900,color:"#f44"}}>{nextStage.bossHp}</div>
+          </div>
+          <div style={{padding:"8px 14px",background:"#0e0e1e",border:"2px solid #223",textAlign:"center"}}>
+            <div style={{fontSize:9,color:"#555"}}>てふだ</div>
+            <div style={{fontSize:20,fontWeight:900,color:"#5cf"}}>{nextStage.hl}</div>
+          </div>
+          <div style={{padding:"8px 14px",background:"#0e0e1e",border:"2px solid #223",textAlign:"center"}}>
+            <div style={{fontSize:9,color:"#555"}}>なんいど</div>
+            <div style={{fontSize:14,fontWeight:900,color:{easy:"#5f8",normal:"#fc3",hard:"#f44"}[nextStage.diff]}}>{"★".repeat({easy:1,normal:2,hard:3}[nextStage.diff])}</div>
+          </div>
+        </div>
+
+        {/* 博士の警告 */}
+        <div style={{display:"flex",gap:10,alignItems:"flex-start",width:"100%",marginTop:16,animation:"su .5s 1.1s ease both",opacity:0}}>
+          <div style={{flexShrink:0}}><DrSprite size={44}/></div>
+          <div style={{flex:1,padding:10,background:"#0e0e1e",border:"2px solid #334",position:"relative"}}>
+            <div style={{position:"absolute",left:-5,top:10,width:0,height:0,borderTop:"5px solid transparent",borderBottom:"5px solid transparent",borderRight:"5px solid #334"}}/>
+            <p style={{fontSize:12,color:"rgba(255,255,255,.7)",lineHeight:1.8,margin:0}}>{nextStage.intro}</p>
+          </div>
+        </div>
+
+        {/* ボタン */}
+        <div style={{display:"flex",flexDirection:"column",gap:10,marginTop:20,width:"100%",animation:"su .5s 1.3s ease both",opacity:0}}>
+          <Btn onClick={onFight} bg="#c62828" style={{width:"100%",padding:"14px",fontSize:18}}>⚔️ たたかう！</Btn>
+          <Btn onClick={onHome} bg="#334" style={{width:"100%",fontSize:13}}>🏠 トップへ</Btn>
+        </div>
+      </>}
+    </div>
+  </div>;
+};
+
+/* ═══════════════════════════════════════════════════════════
    App
    ═══════════════════════════════════════════════════════════ */
 window.__App=function App(){
@@ -731,6 +792,7 @@ window.__App=function App(){
   const[stage,setStage]=useState(null);
   const[army,setArmy]=useState([]);
   const[cpuDiff,setCpuDiff]=useState("normal");
+  const[nextStage,setNextStage]=useState(null);
   const[lang,setLang]=useState(()=>{try{return localStorage.getItem("acb_lang")||"hiragana";}catch(e){return "hiragana";}});
   const[cleared,setCleared]=useState(()=>{try{const s=localStorage.getItem("acb_cleared");return s?new Set(JSON.parse(s)):new Set();}catch(e){return new Set();}});
   const[prologueDone,setPrologueDone]=useState(()=>{try{return localStorage.getItem("acb_prologue")==="1";}catch(e){return false;}});
@@ -743,7 +805,10 @@ window.__App=function App(){
   const onCardDone=a=>{setArmy(a);setScr("battle");};
   const onBattleResult=(won,action)=>{
     if(won&&stage){const nc=new Set([...cleared,stage.id]);saveCleared(nc);}
-    if(action==="next"){const next=STAGES.find(s=>s.id===stage.id+1);if(next){startStage(next);return;}}
+    if(action==="nextPreview"){
+      const next=STAGES.find(s=>s.id===stage.id+1);
+      if(next){setNextStage(next);setScr("nextPreview");if(BGM.on())BGM.start("title");return;}
+    }
     if(action==="retry"){startStage(stage);return;}
     setScr("title");if(BGM.on())BGM.start("title");
   };
@@ -755,6 +820,7 @@ window.__App=function App(){
     {scr==="title"&&<TitleScreen onSelectStage={startStage} onStartCpu={startCpu} cleared={cleared} prologueDone={prologueDone} setPrologueDone={savePrologue} lang={lang} setLang={saveLang}/>}
     {scr==="card"&&stage&&<CardPhase stage={stage} onDone={onCardDone}/>}
     {scr==="battle"&&stage&&<BattlePhase army={army} stage={stage} onResult={onBattleResult}/>}
+    {scr==="nextPreview"&&nextStage&&<NextBossPreview nextStage={nextStage} onFight={()=>startStage(nextStage)} onHome={()=>{setScr("title");if(BGM.on())BGM.start("title");}}/>}
     {scr==="cpu"&&<CpuBattle diff={cpuDiff} onResult={onCpuResult}/>}
   </LangCtx.Provider>;
 };
