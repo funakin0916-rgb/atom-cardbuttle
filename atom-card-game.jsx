@@ -321,29 +321,126 @@ const CpuResult=({myArmy,cpuArmy,onResult})=>{
 };
 
 /* ═══════════════════════════════════════════════════════════
-   Ending
+   Ending (通常: ネオバブリンカットイン / TRUE: 完全クリア)
    ═══════════════════════════════════════════════════════════ */
 const Ending=({isFinal,onHome})=>{
   const cn=useCN();const[ph,setPh]=useState(0);
-  useEffect(()=>{BGM.stop();const t=[];t.push(setTimeout(()=>setPh(1),800));t.push(setTimeout(()=>{setPh(2);SE.victory();},4000));t.push(setTimeout(()=>setPh(3),9000));t.push(setTimeout(()=>setPh(4),18500));t.push(setTimeout(()=>setPh(5),22500));return()=>t.forEach(clearTimeout);},[]);
+  // 通常: 0→1撃破 →2博士平和 →3暗転 →4ネオバブリン! →5博士驚き →6EX解放+ボタン
+  // TRUE: 0→1撃破 →2博士感謝 →3パレード →4タイトルコール →5クレジット
+  useEffect(()=>{
+    BGM.stop();const t=[];
+    if(isFinal){
+      t.push(setTimeout(()=>setPh(1),800));
+      t.push(setTimeout(()=>{setPh(2);SE.victory();},4000));
+      t.push(setTimeout(()=>setPh(3),9000));
+      t.push(setTimeout(()=>setPh(4),18500));
+      t.push(setTimeout(()=>setPh(5),22500));
+    } else {
+      t.push(setTimeout(()=>setPh(1),800));
+      t.push(setTimeout(()=>{setPh(2);SE.victory();},4000));
+      t.push(setTimeout(()=>setPh(3),10000)); // 暗転
+      t.push(setTimeout(()=>{setPh(4);SE.attack();},11500)); // ネオバブリン!!
+      t.push(setTimeout(()=>setPh(5),15000)); // 博士「なんじゃと！？」
+      t.push(setTimeout(()=>setPh(6),19000)); // EX解放+ボタン
+    }
+    return()=>t.forEach(clearTimeout);
+  },[]);
+
   const fw=useRef(Array.from({length:60},(_,i)=>({id:i,x:Math.random()*100,y:10+Math.random()*50,dl:.5+Math.random()*8,sz:30+Math.random()*50,co:["#f44","#fc3","#5f8","#5cf","#c9f","#f93","#ff1744","#00e5ff","#ffd600"][i%9]}))).current;
   const conf=useRef(Array.from({length:50},(_,i)=>({id:i,x:Math.random()*100,dl:Math.random()*6,dur:2+Math.random()*4,co:["#f44","#fc3","#5f8","#5cf","#c9f","#f93"][i%6],sz:4+Math.random()*6}))).current;
 
-  return <div style={{minHeight:"100dvh",display:"flex",flexDirection:"column",alignItems:"center",position:"relative",overflow:"hidden",background:"linear-gradient(180deg,#040410,#080820,#040410)"}}><Stars n={50}/>
+  // ── TRUE ENDING ──
+  if(isFinal) return <div style={{minHeight:"100dvh",display:"flex",flexDirection:"column",alignItems:"center",position:"relative",overflow:"hidden",background:"linear-gradient(180deg,#040410,#080820,#040410)"}}><Stars n={50}/>
     {ph>=1&&fw.map(f=><div key={f.id} style={{position:"fixed",left:`${f.x}%`,top:`${f.y}%`,width:f.sz,height:f.sz,borderRadius:"50%",border:`2px solid ${f.co}`,opacity:0,animation:`fw 1.5s ${f.dl}s ease-out infinite`,boxShadow:`0 0 20px ${f.co}`,zIndex:4,pointerEvents:"none"}}/>)}
     {ph>=3&&conf.map(c=><div key={c.id} style={{position:"fixed",left:`${c.x}%`,top:-20,width:c.sz,height:c.sz*1.4,background:c.co,opacity:0,animation:`cf ${c.dur}s ${c.dl}s linear infinite`,zIndex:5,pointerEvents:"none"}}/>)}
     <div style={{position:"relative",zIndex:10,display:"flex",flexDirection:"column",alignItems:"center",width:"100%",maxWidth:340,padding:"max(40px,env(safe-area-inset-top)) 24px 40px"}}>
-      {ph>=1&&ph<2&&<div style={{textAlign:"center",animation:"ca .8s ease both"}}><div style={{fontSize:14,color:"#f44",fontWeight:900,letterSpacing:".2em",marginBottom:16,fontFamily:"'Press Start 2P','DotGothic16',monospace"}}>{isFinal?"TRUE ENDING":"ENDING"}</div><div style={{opacity:.4,filter:"brightness(2) saturate(0)",animation:"shake .5s ease"}}><BossSprite id={isFinal?10:10} size={140}/></div><div style={{fontSize:28,fontWeight:900,color:"#ff1744",marginTop:12,textShadow:"0 0 30px #f00",animation:"ca .5s .5s ease both",opacity:0}}>💥 💎 💥</div></div>}
-      {ph>=2&&ph<3&&<div style={{textAlign:"center",animation:"fadeIn 1s ease both"}}><div style={{animation:"fl 2s ease-in-out infinite",marginBottom:16}}><DrSprite size={140}/></div><div style={{padding:16,background:"rgba(8,8,32,.92)",border:"3px solid rgba(255,200,50,.3)",maxWidth:300,animation:"su .8s .5s ease both",opacity:0}}><p style={{fontSize:15,color:"#fc3",lineHeight:2.2,textAlign:"center",fontWeight:600,margin:0}}>{isFinal?"博士「すべてのモンスターを…\n裏も表も全部倒した！\n\nキミは歴史に残る\n真の化学マスターじゃ！！！」":"博士「ダイヤキングを倒した！\n\nキミのおかげで研究所に\n平和がもどったぞ！\n\n…しかし、モンスターたちが\n進化しておる！？\nEXステージ解放じゃ！」"}</p></div><div style={{marginTop:12,fontSize:40,animation:"ca .5s 2s ease both",opacity:0}}>🎉🎊🏆🎊🎉</div></div>}
+      {ph>=1&&ph<2&&<div style={{textAlign:"center",animation:"ca .8s ease both"}}><div style={{fontSize:14,color:"#f44",fontWeight:900,letterSpacing:".2em",marginBottom:16,fontFamily:"'Press Start 2P','DotGothic16',monospace"}}>TRUE ENDING</div><div style={{opacity:.4,filter:"brightness(2) saturate(0)",animation:"shake .5s ease"}}><BossSprite id={10} size={140}/></div><div style={{fontSize:28,fontWeight:900,color:"#ff1744",marginTop:12,textShadow:"0 0 30px #f00",animation:"ca .5s .5s ease both",opacity:0}}>💥 💎 💥</div></div>}
+      {ph>=2&&ph<3&&<div style={{textAlign:"center",animation:"fadeIn 1s ease both"}}><div style={{animation:"fl 2s ease-in-out infinite",marginBottom:16}}><DrSprite size={140}/></div><div style={{padding:16,background:"rgba(8,8,32,.92)",border:"3px solid rgba(255,200,50,.3)",maxWidth:300,animation:"su .8s .5s ease both",opacity:0}}><p style={{fontSize:15,color:"#fc3",lineHeight:2.2,textAlign:"center",fontWeight:600,margin:0}}>{"博士「すべてのモンスターを…\n裏も表も全部倒した！\n\nキミは歴史に残る\n真の化学マスターじゃ！！！」"}</p></div><div style={{marginTop:12,fontSize:40,animation:"ca .5s 2s ease both",opacity:0}}>🎉🎊🏆🎊🎉</div></div>}
       {ph>=3&&ph<4&&<div style={{textAlign:"center",width:"100%",animation:"fadeIn .8s ease both"}}><div style={{fontSize:12,color:"#fc3",fontWeight:900,letterSpacing:".1em",marginBottom:16,fontFamily:"'Press Start 2P','DotGothic16',monospace"}}>ALL MONSTERS</div>
-        {STAGES.filter(s=>isFinal||!s.ex).map((s,i)=><div key={s.id} style={{display:"flex",alignItems:"center",gap:8,padding:"4px 8px",marginBottom:3,background:`${s.bossColor}08`,border:`1px solid ${s.bossColor}33`,animation:`slideRight .4s ${i*.25}s ease both`,opacity:0}}><BossSprite id={s.bossId} size={32}/><span style={{fontSize:11,fontWeight:900,color:s.bossColor,flex:1}}>{s.bossName}</span><span style={{fontSize:12,color:"#5f8"}}>✓</span></div>)}
+        {STAGES.map((s,i)=><div key={s.id} style={{display:"flex",alignItems:"center",gap:8,padding:"4px 8px",marginBottom:3,background:`${s.bossColor}08`,border:`1px solid ${s.bossColor}33`,animation:`slideRight .4s ${i*.2}s ease both`,opacity:0}}><BossSprite id={s.bossId} size={32}/><span style={{fontSize:11,fontWeight:900,color:s.bossColor,flex:1}}>{s.bossName}</span><span style={{fontSize:12,color:"#5f8"}}>✓</span></div>)}
       </div>}
-      {ph>=4&&<div style={{textAlign:"center",animation:"ca 1s ease both"}}><div style={{fontSize:60,marginBottom:12,filter:"drop-shadow(0 8px 40px rgba(255,200,50,.5))",animation:"fl 2s ease-in-out infinite"}}>🧪</div><h1 style={{fontSize:18,color:"#5cf",fontFamily:"'Press Start 2P','DotGothic16',monospace",lineHeight:2,animation:"titleGlow 3s ease-in-out infinite"}}>げんし<br/>モンスターバトル</h1><div style={{marginTop:12,fontSize:18,color:"#fc3",fontWeight:900,animation:"su .5s .5s ease both",opacity:0,fontFamily:"'Press Start 2P','DotGothic16',monospace"}}>{isFinal?"TRUE COMPLETE!":"COMPLETE!"}</div><div style={{marginTop:16,display:"flex",justifyContent:"center",gap:4}}>{ATOMS.map((a,i)=><div key={a.s} style={{animation:`fl ${1.5+i*.2}s ease-in-out infinite`}}><AtomSprite s={a.s} size={24}/></div>)}</div></div>}
-      {ph>=5&&<div style={{textAlign:"center",marginTop:24,animation:"su .8s ease both",width:"100%"}}><div style={{padding:12,background:"rgba(255,255,255,.02)",border:"1px solid rgba(255,255,255,.06)",marginBottom:16}}><div style={{fontSize:9,color:"#555",lineHeight:2}}>SPECIAL THANKS<br/><span style={{color:"#fc3",fontSize:13,fontWeight:900}}>プレイしてくれてありがとう！</span></div></div>
-        {!isFinal&&<div style={{padding:10,border:"2px solid rgba(200,150,255,.2)",background:"rgba(200,150,255,.04)",marginBottom:12,animation:"pg 2s ease-in-out infinite","--g":"rgba(200,150,255,.3)"}}><span style={{fontSize:13,color:"#c9f",fontWeight:900}}>🔓 EXステージ解放！</span><br/><span style={{fontSize:10,color:"#888"}}>ステージ選択から挑戦できるぞ！</span></div>}
-        <Btn onClick={()=>{SE.victory();onHome();}} bg="#3355cc" style={{width:"100%",padding:"14px",fontSize:16}}>🏠 タイトルへ</Btn>
-      </div>}
+      {ph>=4&&<div style={{textAlign:"center",animation:"ca 1s ease both"}}><div style={{fontSize:60,marginBottom:12,filter:"drop-shadow(0 8px 40px rgba(255,200,50,.5))",animation:"fl 2s ease-in-out infinite"}}>🧪</div><h1 style={{fontSize:18,color:"#5cf",fontFamily:"'Press Start 2P','DotGothic16',monospace",lineHeight:2,animation:"titleGlow 3s ease-in-out infinite"}}>げんし<br/>モンスターバトル</h1><div style={{marginTop:12,fontSize:18,color:"#fc3",fontWeight:900,animation:"su .5s .5s ease both",opacity:0,fontFamily:"'Press Start 2P','DotGothic16',monospace"}}>TRUE COMPLETE!</div><div style={{marginTop:16,display:"flex",justifyContent:"center",gap:4}}>{ATOMS.map((a,i)=><div key={a.s} style={{animation:`fl ${1.5+i*.2}s ease-in-out infinite`}}><AtomSprite s={a.s} size={24}/></div>)}</div></div>}
+      {ph>=5&&<div style={{textAlign:"center",marginTop:24,animation:"su .8s ease both",width:"100%"}}><div style={{padding:12,background:"rgba(255,255,255,.02)",border:"1px solid rgba(255,255,255,.06)",marginBottom:16}}><div style={{fontSize:9,color:"#555",lineHeight:2}}>SPECIAL THANKS<br/><span style={{color:"#fc3",fontSize:13,fontWeight:900}}>プレイしてくれてありがとう！</span></div></div><Btn onClick={()=>{SE.victory();onHome();}} bg="#3355cc" style={{width:"100%",padding:"14px",fontSize:16}}>🏠 タイトルへ</Btn></div>}
     </div></div>;
+
+  // ── 通常エンディング（ネオバブリンカットイン） ──
+  return <div style={{minHeight:"100dvh",display:"flex",flexDirection:"column",alignItems:"center",position:"relative",overflow:"hidden",background:ph>=3&&ph<5?"#000":ph>=4?"radial-gradient(ellipse at 50% 40%,rgba(0,188,212,.1),transparent 60%),linear-gradient(180deg,#040410,#080820)":"linear-gradient(180deg,#040410,#080820,#040410)"}}><Stars n={ph>=3&&ph<5?0:40}/>
+    {/* 花火（ph1-2だけ） */}
+    {ph>=1&&ph<3&&fw.map(f=><div key={f.id} style={{position:"fixed",left:`${f.x}%`,top:`${f.y}%`,width:f.sz,height:f.sz,borderRadius:"50%",border:`2px solid ${f.co}`,opacity:0,animation:`fw 1.5s ${f.dl}s ease-out infinite`,boxShadow:`0 0 20px ${f.co}`,zIndex:4,pointerEvents:"none"}}/>)}
+
+    <div style={{position:"relative",zIndex:10,display:"flex",flexDirection:"column",alignItems:"center",width:"100%",maxWidth:340,padding:"max(40px,env(safe-area-inset-top)) 24px 40px"}}>
+
+      {/* Ph1: ダイヤキング撃破 */}
+      {ph>=1&&ph<2&&<div style={{textAlign:"center",animation:"ca .8s ease both"}}>
+        <div style={{fontSize:14,color:"#f44",fontWeight:900,letterSpacing:".2em",marginBottom:16,fontFamily:"'Press Start 2P','DotGothic16',monospace"}}>ENDING</div>
+        <div style={{opacity:.4,filter:"brightness(2) saturate(0)",animation:"shake .5s ease"}}><BossSprite id={10} size={140}/></div>
+        <div style={{fontSize:28,fontWeight:900,color:"#ff1744",marginTop:12,textShadow:"0 0 30px #f00",animation:"ca .5s .5s ease both",opacity:0}}>💥 💎 💥</div>
+      </div>}
+
+      {/* Ph2: 博士「平和がもどった…」（穏やかムード） */}
+      {ph>=2&&ph<3&&<div style={{textAlign:"center",animation:"fadeIn 1s ease both"}}>
+        <div style={{animation:"fl 2s ease-in-out infinite",marginBottom:16}}><DrSprite size={140}/></div>
+        <div style={{padding:16,background:"rgba(8,8,32,.92)",border:"3px solid rgba(255,200,50,.3)",maxWidth:300,animation:"su .8s .5s ease both",opacity:0}}>
+          <p style={{fontSize:15,color:"#fc3",lineHeight:2.2,textAlign:"center",fontWeight:600,margin:0}}>{"博士「ダイヤキングを倒した！\n\nキミのおかげで研究所に\n平和がもどったぞ！\n\nこれで安心じゃ…\nありがとう…！」"}</p>
+        </div>
+        <div style={{marginTop:12,fontSize:40,animation:"ca .5s 2s ease both",opacity:0}}>🎉🎊🏆🎊🎉</div>
+        <div style={{marginTop:12,fontSize:12,color:"#888",animation:"su .5s 3s ease both",opacity:0}}>研究所に平和がもどった…</div>
+      </div>}
+
+      {/* Ph3: 暗転＋不穏な演出 */}
+      {ph>=3&&ph<4&&<div style={{textAlign:"center",animation:"fadeIn .5s ease both"}}>
+        <div style={{fontSize:14,color:"#555",animation:"pixelStar 1s ease-in-out infinite"}}>. . .</div>
+        <div style={{marginTop:20,fontSize:12,color:"#444",animation:"su 1s 1s ease both",opacity:0}}>…ん？</div>
+        <div style={{marginTop:12,fontSize:13,color:"#f44",fontWeight:700,animation:"su 1s 2s ease both",opacity:0}}>地面が…ゆれている…？</div>
+      </div>}
+
+      {/* Ph4: ネオバブリン カットイン！！ */}
+      {ph>=4&&ph<5&&<div style={{textAlign:"center",position:"relative"}}>
+        {/* 背景フラッシュ */}
+        <div style={{position:"fixed",inset:0,background:"#00BCD4",animation:"fadeIn .1s ease forwards",opacity:0,zIndex:-1}}/>
+
+        {/* ネオバブリン登場！ */}
+        <div style={{fontSize:12,color:"#ff1744",fontWeight:900,letterSpacing:".2em",marginBottom:12,fontFamily:"'Press Start 2P','DotGothic16',monospace",animation:"shake .3s ease infinite"}}>! ! WARNING ! !</div>
+        <div style={{animation:"ca .5s cubic-bezier(.34,1.56,.64,1) both",filter:"drop-shadow(0 12px 50px rgba(0,188,212,.8))"}}>
+          <BossSprite id={1} size={180}/>
+        </div>
+        <div style={{fontSize:24,fontWeight:900,color:"#00BCD4",marginTop:12,textShadow:"0 0 20px #00BCD4",animation:"su .4s .3s ease both",opacity:0,fontFamily:"'Press Start 2P','DotGothic16',monospace"}}>ネオバブリン</div>
+        <div style={{fontSize:14,color:"#ff1744",fontWeight:900,marginTop:8,animation:"shake .5s .5s ease both",opacity:0}}>「…まだ おわりじゃ ないぞ…！」</div>
+        <div style={{marginTop:12,fontSize:12,color:"#80deea",animation:"su .5s 1s ease both",opacity:0}}>進化したモンスターたちが現れた！</div>
+      </div>}
+
+      {/* Ph5: 博士「なんじゃと！？」 */}
+      {ph>=5&&ph<6&&<div style={{textAlign:"center",animation:"fadeIn .5s ease both"}}>
+        <div style={{animation:"shake .3s ease",marginBottom:16}}><DrSprite size={120}/></div>
+        <div style={{padding:16,background:"rgba(8,8,32,.92)",border:"3px solid rgba(255,50,50,.3)",maxWidth:300,animation:"su .5s .3s ease both",opacity:0}}>
+          <p style={{fontSize:15,color:"#f44",lineHeight:2.2,textAlign:"center",fontWeight:600,margin:0}}>{"博士「な、なんじゃと！？\n\nダイヤキングの欠片から\nモンスターたちが進化しておる！\n\nまだ戦いは終わっておらん…\nキミの力がまた必要じゃ！」"}</p>
+        </div>
+      </div>}
+
+      {/* Ph6: EX解放 + ボタン */}
+      {ph>=6&&<div style={{textAlign:"center",animation:"ca .8s ease both",width:"100%"}}>
+        <div style={{padding:16,border:"3px solid rgba(0,188,212,.4)",background:"rgba(0,188,212,.06)",marginBottom:16,animation:"pg 2s ease-in-out infinite","--g":"rgba(0,188,212,.4)"}}>
+          <div style={{fontSize:18,color:"#00BCD4",fontWeight:900,fontFamily:"'Press Start 2P','DotGothic16',monospace"}}>🔓 EX STAGES</div>
+          <div style={{fontSize:14,color:"#00BCD4",fontWeight:900,marginTop:8}}>裏ステージ解放！</div>
+          <div style={{marginTop:10,display:"flex",justifyContent:"center",gap:6}}>
+            {STAGES.filter(s=>s.ex).map(s=><div key={s.id} style={{animation:`fl ${2+s.id*.2}s ease-in-out infinite`}}><BossSprite id={s.bossId} size={32}/></div>)}
+          </div>
+          <div style={{fontSize:11,color:"#888",marginTop:8}}>進化したモンスター5体が待ちうけるぞ！</div>
+        </div>
+
+        <div style={{display:"flex",gap:8,alignItems:"flex-start",width:"100%",marginBottom:16,animation:"su .5s .3s ease both",opacity:0}}>
+          <DrSprite size={40}/>
+          <div style={{flex:1,padding:10,background:"#0e0e1e",border:"2px solid #334",position:"relative"}}>
+            <div style={{position:"absolute",left:-5,top:10,width:0,height:0,borderTop:"5px solid transparent",borderBottom:"5px solid transparent",borderRight:"5px solid #334"}}/>
+            <p style={{fontSize:11,color:"#fc3",lineHeight:1.8,margin:0}}>博士「ステージ選択からEXに挑戦できるぞ！すべて倒せば…真のエンディングが待っておる！」</p>
+          </div>
+        </div>
+
+        <Btn onClick={()=>{SE.tap();onHome();}} bg="#00838f" style={{width:"100%",padding:"14px",fontSize:16}}>⚔️ EXステージへ！</Btn>
+        <button onClick={onHome} style={{marginTop:8,padding:"8px",border:"1px solid #333",background:"transparent",color:"#555",fontSize:11,fontWeight:700,width:"100%"}}>🏠 トップへ</button>
+      </div>}
+    </div>
+  </div>;
 };
 
 /* ═══════════════════════════════════════════════════════════
