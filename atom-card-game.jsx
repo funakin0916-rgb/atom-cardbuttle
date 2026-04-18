@@ -338,10 +338,13 @@ const Ending=({isFinal,onHome})=>{
     } else {
       t.push(setTimeout(()=>setPh(1),800));
       t.push(setTimeout(()=>{setPh(2);SE.victory();},4000));
-      t.push(setTimeout(()=>setPh(3),10000)); // 暗転
-      t.push(setTimeout(()=>{setPh(4);SE.attack();},11500)); // ネオバブリン!!
-      t.push(setTimeout(()=>setPh(5),15000)); // 博士「なんじゃと！？」
-      t.push(setTimeout(()=>setPh(6),19000)); // EX解放+ボタン
+      t.push(setTimeout(()=>setPh(3),11000));  // 暗転開始
+      t.push(setTimeout(()=>setPh(31),13000)); // …ん？
+      t.push(setTimeout(()=>setPh(32),15000)); // 地面が揺れている
+      t.push(setTimeout(()=>setPh(33),17500)); // ゴゴゴゴ…
+      t.push(setTimeout(()=>{setPh(4);SE.attack();},20000)); // ネオバブリン!!
+      t.push(setTimeout(()=>setPh(5),24500)); // 博士
+      t.push(setTimeout(()=>setPh(6),29000)); // EX解放
     }
     return()=>t.forEach(clearTimeout);
   },[]);
@@ -364,7 +367,7 @@ const Ending=({isFinal,onHome})=>{
     </div></div>;
 
   // ── 通常エンディング（ネオバブリンカットイン） ──
-  return <div style={{minHeight:"100dvh",display:"flex",flexDirection:"column",alignItems:"center",position:"relative",overflow:"hidden",background:ph>=3&&ph<5?"#000":ph>=4?"radial-gradient(ellipse at 50% 40%,rgba(0,188,212,.1),transparent 60%),linear-gradient(180deg,#040410,#080820)":"linear-gradient(180deg,#040410,#080820,#040410)"}}><Stars n={ph>=3&&ph<5?0:40}/>
+  return <div style={{minHeight:"100dvh",display:"flex",flexDirection:"column",alignItems:"center",position:"relative",overflow:"hidden",background:ph>=3&&ph<4?"#000":ph>=4&&ph<5?"radial-gradient(ellipse at 50% 40%,rgba(0,188,212,.08),transparent 60%),#020210":"linear-gradient(180deg,#040410,#080820,#040410)",transition:"background 2s ease"}}><Stars n={ph>=3&&ph<4?0:ph>=4&&ph<5?5:40}/>
     {/* 花火（ph1-2だけ） */}
     {ph>=1&&ph<3&&fw.map(f=><div key={f.id} style={{position:"fixed",left:`${f.x}%`,top:`${f.y}%`,width:f.sz,height:f.sz,borderRadius:"50%",border:`2px solid ${f.co}`,opacity:0,animation:`fw 1.5s ${f.dl}s ease-out infinite`,boxShadow:`0 0 20px ${f.co}`,zIndex:4,pointerEvents:"none"}}/>)}
 
@@ -387,26 +390,47 @@ const Ending=({isFinal,onHome})=>{
         <div style={{marginTop:12,fontSize:12,color:"#888",animation:"su .5s 3s ease both",opacity:0}}>研究所に平和がもどった…</div>
       </div>}
 
-      {/* Ph3: 暗転＋不穏な演出 */}
-      {ph>=3&&ph<4&&<div style={{textAlign:"center",animation:"fadeIn .5s ease both"}}>
-        <div style={{fontSize:14,color:"#555",animation:"pixelStar 1s ease-in-out infinite"}}>. . .</div>
-        <div style={{marginTop:20,fontSize:12,color:"#444",animation:"su 1s 1s ease both",opacity:0}}>…ん？</div>
-        <div style={{marginTop:12,fontSize:13,color:"#f44",fontWeight:700,animation:"su 1s 2s ease both",opacity:0}}>地面が…ゆれている…？</div>
+      {/* Ph3: 暗転 — 静寂 */}
+      {ph>=3&&ph<31&&<div style={{textAlign:"center",animation:"fadeIn 2s ease both"}}>
+        <div style={{fontSize:16,color:"#333",letterSpacing:".3em",animation:"pixelStar 2s ease-in-out infinite"}}>. . .</div>
+      </div>}
+
+      {/* Ph31: …ん？ */}
+      {ph>=31&&ph<32&&<div style={{textAlign:"center",animation:"fadeIn 1s ease both"}}>
+        <div style={{fontSize:14,color:"#444",animation:"su 1s ease both"}}>…ん？</div>
+        <div style={{marginTop:20,fontSize:11,color:"#333",animation:"su 1s .8s ease both",opacity:0}}>なにか おかしい…</div>
+      </div>}
+
+      {/* Ph32: 地面が揺れている */}
+      {ph>=32&&ph<33&&<div style={{textAlign:"center",animation:"shake .2s ease infinite"}}>
+        <div style={{fontSize:15,color:"#c62828",fontWeight:900,animation:"su .5s ease both"}}>地面が…ゆれている…！？</div>
+        <div style={{marginTop:16,fontSize:24,color:"#f4433666",animation:"pixelStar .5s ease-in-out infinite"}}>ゴ ゴ ゴ ゴ</div>
+        <div style={{marginTop:16,fontSize:11,color:"#555",animation:"su 1s 1s ease both",opacity:0}}>ダイヤキングの欠片が…光っている…！</div>
+      </div>}
+
+      {/* Ph33: 画面激しく揺れ＋警告 */}
+      {ph>=33&&ph<4&&<div style={{textAlign:"center",animation:"shake .15s ease infinite"}}>
+        <div style={{fontSize:30,color:"#f44",fontWeight:900,animation:"pixelStar .3s ease-in-out infinite",letterSpacing:".2em"}}>！！！</div>
+        <div style={{marginTop:12,width:60,height:60,margin:"12px auto",background:"#c62828",animation:"pg .4s ease-in-out infinite","--g":"rgba(255,50,50,.8)",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:28,animation:"pixelStar .3s ease-in-out infinite"}}>💎</span></div>
+        <div style={{marginTop:12,fontSize:12,color:"#f44",fontWeight:900,animation:"pixelStar .4s ease-in-out infinite"}}>エネルギーが ぼうそうしている…！</div>
       </div>}
 
       {/* Ph4: ネオバブリン カットイン！！ */}
       {ph>=4&&ph<5&&<div style={{textAlign:"center",position:"relative"}}>
-        {/* 背景フラッシュ */}
-        <div style={{position:"fixed",inset:0,background:"#00BCD4",animation:"fadeIn .1s ease forwards",opacity:0,zIndex:-1}}/>
+        {/* 白フラッシュ → シアン */}
+        <div style={{position:"fixed",inset:0,background:"#fff",zIndex:50,animation:"fadeIn .05s ease forwards",pointerEvents:"none"}}/>
+        <div style={{position:"fixed",inset:0,background:"radial-gradient(circle at 50% 40%,#00BCD488,#00083880)",zIndex:49,animation:"fadeIn .3s .1s ease forwards",opacity:0,pointerEvents:"none"}}/>
 
-        {/* ネオバブリン登場！ */}
-        <div style={{fontSize:12,color:"#ff1744",fontWeight:900,letterSpacing:".2em",marginBottom:12,fontFamily:"'Press Start 2P','DotGothic16',monospace",animation:"shake .3s ease infinite"}}>! ! WARNING ! !</div>
-        <div style={{animation:"ca .5s cubic-bezier(.34,1.56,.64,1) both",filter:"drop-shadow(0 12px 50px rgba(0,188,212,.8))"}}>
-          <BossSprite id={1} size={180}/>
+        {/* WARNING */}
+        <div style={{fontSize:14,color:"#ff1744",fontWeight:900,letterSpacing:".25em",marginBottom:16,fontFamily:"'Press Start 2P','DotGothic16',monospace",animation:"shake .2s ease infinite",textShadow:"0 0 12px #f00"}}>⚠ WARNING ⚠</div>
+
+        {/* ネオバブリン ドカーン */}
+        <div style={{animation:"ca .6s cubic-bezier(.34,1.56,.64,1) both",filter:"drop-shadow(0 16px 60px rgba(0,188,212,.9)) drop-shadow(0 0 30px rgba(0,188,212,.5))"}}>
+          <BossSprite id={1} size={200}/>
         </div>
-        <div style={{fontSize:24,fontWeight:900,color:"#00BCD4",marginTop:12,textShadow:"0 0 20px #00BCD4",animation:"su .4s .3s ease both",opacity:0,fontFamily:"'Press Start 2P','DotGothic16',monospace"}}>ネオバブリン</div>
-        <div style={{fontSize:14,color:"#ff1744",fontWeight:900,marginTop:8,animation:"shake .5s .5s ease both",opacity:0}}>「…まだ おわりじゃ ないぞ…！」</div>
-        <div style={{marginTop:12,fontSize:12,color:"#80deea",animation:"su .5s 1s ease both",opacity:0}}>進化したモンスターたちが現れた！</div>
+        <div style={{fontSize:28,fontWeight:900,color:"#00BCD4",marginTop:12,textShadow:"0 0 24px #00BCD4, 0 0 60px #00BCD488",animation:"su .4s .4s ease both",opacity:0,fontFamily:"'Press Start 2P','DotGothic16',monospace"}}>ネオバブリン</div>
+        <div style={{fontSize:16,color:"#ff1744",fontWeight:900,marginTop:12,animation:"shake .3s .8s ease both",opacity:0,textShadow:"0 0 8px #f00"}}>「…まだ おわりじゃ ないぞ…！」</div>
+        <div style={{marginTop:16,fontSize:13,color:"#80deea",animation:"su .5s 1.5s ease both",opacity:0}}>進化したモンスターたちが現れた！</div>
       </div>}
 
       {/* Ph5: 博士「なんじゃと！？」 */}
