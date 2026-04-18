@@ -247,7 +247,7 @@ const Prologue=({onDone})=>{const[pg,setPg]=useState(0);const[fade,setFade]=useS
 /* ═══════════════════════════════════════════════════════════
    タイトル＋設定＋ステージ選択
    ═══════════════════════════════════════════════════════════ */
-const TitleScreen=({onSelectStage,onStartCpu,cleared,prologueDone,setPrologueDone,lang,setLang})=>{
+const TitleScreen=({onSelectStage,onStartCpu,onEnding,cleared,prologueDone,setPrologueDone,lang,setLang})=>{
   const[mode,setMode]=useState(null);
   const[selStage,setSelStage]=useState(null);
   const[cpuDiff,setCpuDiff]=useState("normal");
@@ -300,6 +300,7 @@ const TitleScreen=({onSelectStage,onStartCpu,cleared,prologueDone,setPrologueDon
       <div style={{display:"flex",flexDirection:"column",gap:10,width:"100%",maxWidth:260}}>
         <Btn onClick={()=>setMode("stages")} bg="#c62828" style={{width:"100%",padding:"14px",fontSize:16,display:"flex",alignItems:"center",gap:8,justifyContent:"center"}}><BossSprite id={1} size={28}/> ストーリー</Btn>
         <Btn onClick={()=>setMode("cpu")} bg="#e65100" style={{width:"100%",padding:"14px",fontSize:16}}>🤖 CPU たいせん</Btn>
+        <button onClick={onEnding} style={{width:"100%",padding:"8px",border:"1px solid #333",background:"transparent",color:"#555",fontSize:10,fontWeight:700}}>🌟 エンディングを見る</button>
       </div>
       <SettingsPanel/>
       <div style={{marginTop:20,display:"flex",gap:6,opacity:.5}}>{[1,3,5,7,10].map(id=><div key={id} style={{animation:`fl ${2+id*.3}s ease-in-out infinite`}}><BossSprite id={id} size={28}/></div>)}</div>
@@ -915,7 +916,7 @@ window.__App=function App(){
 
   return <LangCtx.Provider value={lang}><style>{CSS}</style>
     <BgmBtn/>
-    {scr==="title"&&<TitleScreen onSelectStage={startStage} onStartCpu={startCpu} cleared={cleared} prologueDone={prologueDone} setPrologueDone={savePrologue} lang={lang} setLang={saveLang}/>}
+    {scr==="title"&&<TitleScreen onSelectStage={startStage} onStartCpu={startCpu} onEnding={()=>setScr("ending")} cleared={cleared} prologueDone={prologueDone} setPrologueDone={savePrologue} lang={lang} setLang={saveLang}/>}
     {scr==="card"&&stage&&<CardPhase stage={stage} onDone={onCardDone}/>}
     {scr==="battle"&&stage&&<BattlePhase army={army} stage={stage} onResult={onBattleResult}/>}
     {scr==="nextPreview"&&nextStage&&<NextBossPreview nextStage={nextStage} onFight={()=>startStage(nextStage)} onHome={()=>{setScr("title");if(BGM.on())BGM.start("title");}}/>}
