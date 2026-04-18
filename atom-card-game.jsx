@@ -23,7 +23,7 @@ const COMP_PIXELS={H2:{p:{'a':'#4cff4c','A':'#2e7d32','w':'#fff','e':'#1b5e20','
 const CompSprite=({k,size=48})=>{const d=COMP_PIXELS[k];return d?<PA rows={d.r} palette={d.p} size={size}/>:null;};
 
 /* ── Boss Pixels ─── */
-const BOSS_PIXELS={1:{p:{'a':'#81D4FA','A':'#4FC3F7','b':'#B3E5FC','w':'#fff','e':'#0d47a1','p':'#f48fb1','h':'#e1f5fe'},r:['     bbb       ','    bhhbb  b   ','   bhhhbbb bb  ','    bbbb  bb   ','    aaaaaaa    ','   aaaaaaaaa   ','  aaawwaawwaa  ','  aaaewaaewaA  ','  aaaaaaaaaaA  ','  aapaaaaapaA  ','  aaaammmaaAA  ','   aaaaaaaAA   ','    AAAAAAA    ','   AA    AA    ']},2:{p:{'a':'#4FC3F7','A':'#0288d1','b':'#B3E5FC','w':'#fff','e':'#01579b','f':'#039be5','h':'#e1f5fe'},r:['   f    f      ','  ff    ff     ','  f aaaaaa f   ','    aaaaaaa    ','   aaawwaawwaa ','   aaaewaewaa  ','   aaaaaaaaaa  ','    aapaaapaa  ','    aaaaaaa    ','     aaaaaa   A','      AAAA AAA ','    AA    AA   ']},3:{p:{'a':'#FFE082','A':'#F9A825','w':'#fff','e':'#e65100','d':'#FFC107'},r:['    A    A     ','   AA    AA    ','   AAaaaaaaA   ','    aaaaaaaa   ','   aaacaacaaa  ','   aaaeaaeaaa  ','   aaaaaaaaaa  ','    aaaaaaa    ','     AAAAA     ',' d   AAAAA  d  ','      A  A     ']},4:{p:{'a':'#A5D6A7','A':'#66BB6A','w':'#fff','e':'#1b5e20','f':'#81C784'},r:['      fff      ','     faaaf     ','   aaaaaaaaaa  ','  aaeeaaeeaaa  ','  aaaaaaaaaaaf ',' faaaaaaaaaa f ','  aaapaaapaa   ','   aaaaaaa     ','    AAAAA      ',' ff  AAA  ff   ','   ff   ff     ']},5:{p:{'a':'#FF8A65','A':'#E65100','w':'#fff','e':'#BF360C','y':'#FFF200','h':'#4E342E'},r:['    aaaaaaa    ','  aaawwawwaaa  ','  aaayeayeaaa  ','  aaaaaaaaaa   ','  eeeeeeeeeee  ',' eAAAAAAAAAAAAe ',' eAsAAAsAAAsAe  ',' eAAAAAAAAAAAAe ','  eeeeeeeeee   ','  hh      hh   ']},6:{p:{'a':'#B0BEC5','A':'#78909C','w':'#fff','e':'#37474F','y':'#FDD835','d':'#455A64'},r:[' aa  aa  aa    ',' aaaaaaaaaadd  ','  aaacaacaadd  ','  aaaeaaaeadd  ','  aaaaaaaaaddd ','  gaaaaaaaadd  ',' g AAAAAAsAdyd ',' gg AAAAAAA yd ','    AAAAAAA    ','    AA   AA    ']},7:{p:{'a':'#8D6E63','A':'#5D4037','w':'#fff','e':'#3E2723','r':'#FF1744','h':'#4E342E'},r:['    hh  hh     ','   eeeeeeee   ','   earrarre    ','   eaaaaaa e   ','  aa aaaaaa aa ','  AA aaxxa AA  ','  AA aaaaaa A  ','   A AAAAAA    ','  hh  AAAA  hh ','     hh  hh    ']},8:{p:{'a':'#FDD835','A':'#F9A825','w':'#fff','e':'#E65100','k':'#1a1a1a','g':'#FFF176','t':'#F57F17'},r:['   gg    gg    ','   aaaaaaaaa   ','  aaawwaawwaa  ','  aaakkaakkaA  ','  aaaaaaaaaa A ','   aawaaawaa   ','    aaaaaaa    ','    AAAAAA  A  ','       AA AA   ','        AA     ']},9:{p:{'s':'#E8D5B7','w':'#E0E0E0','W':'#BDBDBD','e':'#E91E63','E':'#C62828','k':'#424242','K':'#616161','h':'#fff','c':'#CE93D8','a':'#1a1a1a'},r:['  K  K K  K    ','   kkkkkkkk    ','  ssshhashhass ','  ssseasseass  ','   ssssssss    ','   sEsssEss    ','   wwwwwwww    ','   wWwwwwWw    ','    wwwwww  c  ','    ww  ww  c  ']},10:{p:{'d':'#CE93D8','D':'#AB47BC','w':'#fff','e':'#6A1B9A','g':'#FFD700','G':'#FF8F00','r':'#F44336','b':'#2196F3','n':'#4CAF50','k':'#4A148C'},r:['   g r g r g   ','   gGbGgGnGg   ','   gggggggg    ','    ddddddd    ','   ddhwdhwdd   ','   ddewddewdd  ','   ddddddddd   ','   DDDdddDDD   ','     DDDDD     ','  w    D    w  ']}};
+const BOSS_PIXELS={1:{p:{'a':'#81D4FA','A':'#4FC3F7','b':'#B3E5FC','w':'#fff','e':'#0d47a1','p':'#f48fb1','h':'#e1f5fe'},r:['     bbb       ','    bhhbb  b   ','   bhhhbbb bb  ','    bbbb  bb   ','    aaaaaaa    ','   aaaaaaaaa   ','  aaawwaawwaa  ','  aaaewaaewaA  ','  aaaaaaaaaaA  ','  aapaaaaapaA  ','  aaaammmaaAA  ','   aaaaaaaAA   ','    AAAAAAA    ','   AA    AA    ']},2:{p:{'a':'#4FC3F7','A':'#0288d1','b':'#B3E5FC','w':'#fff','e':'#01579b','f':'#039be5','h':'#e1f5fe'},r:['   f    f      ','  ff    ff     ','  f aaaaaa f   ','    aaaaaaa    ','   aaawwaawwaa ','   aaaewaewaa  ','   aaaaaaaaaa  ','    aapaaapaa  ','    aaaaaaa    ','     aaaaaa   A','      AAAA AAA ','    AA    AA   ']},3:{p:{'a':'#FFE082','A':'#F9A825','w':'#fff','e':'#e65100','d':'#FFC107'},r:['    A    A     ','   AA    AA    ','   AAaaaaaaA   ','    aaaaaaaa   ','   aaacaacaaa  ','   aaaeaaeaaa  ','   aaaaaaaaaa  ','    aaaaaaa    ','     AAAAA     ',' d   AAAAA  d  ','      A  A     ']},4:{p:{'a':'#A5D6A7','A':'#66BB6A','w':'#fff','e':'#1b5e20','f':'#81C784'},r:['      fff      ','     faaaf     ','   aaaaaaaaaa  ','  aaeeaaeeaaa  ','  aaaaaaaaaaaf ',' faaaaaaaaaa f ','  aaapaaapaa   ','   aaaaaaa     ','    AAAAA      ',' ff  AAA  ff   ','   ff   ff     ']},5:{p:{'a':'#FF8A65','A':'#E65100','w':'#fff','e':'#BF360C','y':'#FFF200','h':'#4E342E'},r:['    aaaaaaa    ','  aaawwawwaaa  ','  aaayeayeaaa  ','  aaaaaaaaaa   ','  eeeeeeeeeee  ',' eAAAAAAAAAAAAe ',' eAsAAAsAAAsAe  ',' eAAAAAAAAAAAAe ','  eeeeeeeeee   ','  hh      hh   ']},6:{p:{'a':'#B0BEC5','A':'#78909C','w':'#fff','e':'#37474F','y':'#FDD835','d':'#455A64'},r:[' aa  aa  aa    ',' aaaaaaaaaadd  ','  aaacaacaadd  ','  aaaeaaaeadd  ','  aaaaaaaaaddd ','  gaaaaaaaadd  ',' g AAAAAAsAdyd ',' gg AAAAAAA yd ','    AAAAAAA    ','    AA   AA    ']},7:{p:{'a':'#8D6E63','A':'#5D4037','w':'#fff','e':'#3E2723','r':'#FF1744','h':'#4E342E'},r:['    hh  hh     ','   eeeeeeee   ','   earrarre    ','   eaaaaaa e   ','  aa aaaaaa aa ','  AA aaxxa AA  ','  AA aaaaaa A  ','   A AAAAAA    ','  hh  AAAA  hh ','     hh  hh    ']},8:{p:{'a':'#FDD835','A':'#F9A825','w':'#fff','e':'#E65100','k':'#1a1a1a','g':'#FFF176','t':'#F57F17'},r:['   gg    gg    ','   aaaaaaaaa   ','  aaawwaawwaa  ','  aaakkaakkaA  ','  aaaaaaaaaa A ','   aawaaawaa   ','    aaaaaaa    ','    AAAAAA  A  ','       AA AA   ','        AA     ']},9:{p:{'s':'#E8D5B7','w':'#E0E0E0','W':'#BDBDBD','e':'#E91E63','E':'#C62828','k':'#424242','K':'#616161','h':'#fff','c':'#CE93D8','a':'#1a1a1a'},r:['  K  K K  K    ','   kkkkkkkk    ','  ssshhashhass ','  ssseasseass  ','   ssssssss    ','   sEsssEss    ','   wwwwwwww    ','   wWwwwwWw    ','    wwwwww  c  ','    ww  ww  c  ']},10:{p:{'d':'#CE93D8','D':'#AB47BC','w':'#fff','e':'#6A1B9A','g':'#FFD700','G':'#FF8F00','r':'#F44336','b':'#2196F3','n':'#4CAF50','k':'#4A148C'},r:['   g r g r g   ','   gGbGgGnGg   ','   gggggggg    ','    ddddddd    ','   ddhwdhwdd   ','   ddewddewdd  ','   ddddddddd   ','   DDDdddDDD   ','     DDDDD     ','  w    D    w  ']},11:{p:{'a':'#00E5FF','A':'#00838F','b':'#B2EBF2','w':'#fff','e':'#006064','p':'#E040FB','h':'#E0F7FA','s':'#FFEE58'},r:['    s bbb s    ','    shhbbs b   ','   bhhhbbb bb  ','    bbbb sbb   ','    aaaaaaa    ','   aaaaaaaaa   ','  aaawwaawwaa  ','  aaaewaaewaA  ','  aaaaaaaaaaA  ','  aapaaaaapaA  ','  aaaaaaaaaAA  ','   aaaaaaaAA   ','    AAAAAAA    ','   AA    AA    ']}};
 const BossSprite=({id,size=120})=>{const d=BOSS_PIXELS[id];return d?<PA rows={d.r} palette={d.p} size={size}/>:<div style={{fontSize:size/2}}>👾</div>;};
 
 /* ── Data ─── */
@@ -47,7 +47,7 @@ const STAGES=[
   {id:9,bossId:9,name:"暗黒研究所",hl:7,deckSize:42,diff:"hard",bossName:"ドクターカオス",bossEmoji:"⚗️",bossHp:55,bossColor:"#CE93D8",bossDesc:"暴走した科学者",intro:"博士「ワシの元同僚なんじゃ…止めてくれ！」",win:"博士「カオスを止めてくれた！」",winStory:"博士「最深部にダイヤキングがおる！」",lose:"博士「もっと強くなるんじゃ！」"},
   {id:10,bossId:10,name:"結晶の玉座",hl:7,deckSize:40,diff:"hard",bossName:"ダイヤキング",bossEmoji:"💎",bossHp:70,bossColor:"#E040FB",bossDesc:"最強の結晶モンスター",intro:"博士「すべての頂点に立つ存在じゃ！」",win:"博士「化学マスターじゃ！！！」",winStory:"博士「ダイヤキングが砕け散った！…ん？王冠の欠片が怪しく光っておる。モンスターたちが…進化しておる！？EXステージ解放じゃ！」",lose:"博士「キミなら倒せる！」"},
   // ── EXステージ ──
-  {id:11,bossId:1,name:"EX はじまりの試練",hl:7,deckSize:38,diff:"hard",bossName:"ネオバブリン",bossEmoji:"🫧",bossHp:50,bossColor:"#00BCD4",bossDesc:"進化したバブリン",ex:true,intro:"博士「バブリンが進化しておる！手札7枚じゃ！」",win:"博士「進化版も倒した！」",winStory:"博士「次は2体が合体したツインメタルじゃ！」",lose:"博士「手札が少ないと厳しいな…」"},
+  {id:11,bossId:11,name:"EX はじまりの試練",hl:7,deckSize:38,diff:"hard",bossName:"ネオバブリン",bossEmoji:"🫧",bossHp:50,bossColor:"#00BCD4",bossDesc:"進化したバブリン",ex:true,intro:"博士「バブリンが進化しておる！手札7枚じゃ！」",win:"博士「進化版も倒した！」",winStory:"博士「次は2体が合体したツインメタルじゃ！」",lose:"博士「手札が少ないと厳しいな…」"},
   {id:12,bossId:5,name:"EX 合体の遺跡",hl:7,deckSize:38,diff:"hard",bossName:"ツインメタル",bossEmoji:"⚔️",bossHp:60,bossColor:"#FF6E40",bossDesc:"銅と鉄の合体獣",ex:true,intro:"博士「銅と鉄が合体したツインメタルじゃ！」",win:"博士「合体モンスターも敵じゃないか！」",winStory:"博士「紫色の霧が…毒の女王じゃ！山札が少ない！」",lose:"博士「二重攻撃は強いな…」"},
   {id:13,bossId:4,name:"EX 毒の霧",hl:7,deckSize:35,diff:"hard",bossName:"ポイズンクイーン",bossEmoji:"☠️",bossHp:65,bossColor:"#AB47BC",bossDesc:"毒の女王",ex:true,intro:"博士「山札が少ないから短期決戦じゃ！」",win:"博士「毒の女王を浄化した！」",winStory:"博士「ワシの師匠・プロフェッサーXの力じゃ！」",lose:"博士「一手のミスが致命的じゃ…」"},
   {id:14,bossId:9,name:"EX 師匠の試練",hl:7,deckSize:35,diff:"hard",bossName:"プロフェッサーX",bossEmoji:"🧬",bossHp:75,bossColor:"#5C6BC0",bossDesc:"化学の神",ex:true,intro:"博士「ワシの師匠…化学の神と呼ばれた方じゃ」",win:"博士「師匠を超えた！！天才じゃ！」",winStory:"博士「赤い光が…正体不明の最後の敵じゃ！」",lose:"博士「さすが師匠…」"},
@@ -82,13 +82,69 @@ const Prologue=({onDone})=>{const[pg,setPg]=useState(0);const[fade,setFade]=useS
 /* ═══════════════════════════════════════════════════════════
    Title + Settings + Stage Select
    ═══════════════════════════════════════════════════════════ */
-const TitleScreen=({onSelectStage,onEnding,cleared,prologueDone,setPrologueDone,lang,setLang})=>{
+const PassScreen=({nextName,nextColor,onReady,message})=>{
+  const[count,setCount]=useState(3);
+  useEffect(()=>{if(count>0){const t=setTimeout(()=>setCount(c=>c-1),700);return()=>clearTimeout(t);}},[count]);
+  return <div style={{minHeight:"100dvh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:24,background:`radial-gradient(ellipse at 50% 40%,${nextColor}22,transparent 60%),linear-gradient(180deg,#080820,#0c0c30)`,position:"relative"}}><Stars n={15}/><Scan/>
+    <div style={{position:"relative",zIndex:2,textAlign:"center",maxWidth:320}}>
+      <div style={{fontSize:72,marginBottom:12,animation:"fl 2s ease-in-out infinite"}}>📱</div>
+      <div style={{fontSize:12,color:"#888",fontWeight:700,marginBottom:6,animation:"pixelStar 2s ease-in-out infinite"}}>{message||"つぎのひとに スマホを わたしてね"}</div>
+      <div style={{fontSize:10,color:"#555",marginBottom:20}}>▼ ▼ ▼</div>
+      <div style={{padding:"20px 24px",background:"#0c0c1a",border:`3px solid ${nextColor}`,marginBottom:20,"--g":nextColor+"88",animation:"pg 1.5s ease-in-out infinite"}}>
+        <div style={{fontSize:10,color:"#888",marginBottom:4}}>つぎは…</div>
+        <div style={{fontSize:22,fontWeight:900,color:nextColor,fontFamily:"'Press Start 2P','DotGothic16',monospace"}}>{nextName}</div>
+        <div style={{fontSize:10,color:"#888",marginTop:6}}>さんのターン</div>
+      </div>
+      {count>0?<div style={{fontSize:12,color:"#555"}}>{count}びょうまってね…</div>:
+        <Btn onClick={onReady} bg="#6a1b9a" style={{width:"100%",padding:"14px",fontSize:16}}>✋ じゅんびできた！</Btn>}
+    </div>
+  </div>;
+};
+
+const VsSetup=({onStart,onBack})=>{
+  const[p1,setP1]=useState("プレイヤー1");const[p2,setP2]=useState("プレイヤー2");const[hl,setHl]=useState(8);const[deckSize,setDeckSize]=useState(50);
+  const ok=p1.trim()&&p2.trim()&&p1.trim()!==p2.trim();
+  return <div style={{minHeight:"100dvh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:24,background:"linear-gradient(180deg,#080820,#1a0c30)",position:"relative"}}><Stars/><Scan/><div style={{position:"relative",zIndex:2,maxWidth:320,width:"100%"}}>
+    <div style={{textAlign:"center",marginBottom:18}}><div style={{fontSize:48,animation:"fl 3s ease-in-out infinite"}}>👥</div><h2 style={{fontSize:18,fontWeight:900,color:"#fff",marginTop:6}}>みんなであそぶ</h2><div style={{fontSize:10,color:"#888",marginTop:4}}>スマホをまわして2人で対戦！</div></div>
+    <div style={{padding:12,background:"#0c0c1a",border:"2px solid #223",marginBottom:10}}>
+      <div style={{fontSize:11,color:"#5cf",fontWeight:700,marginBottom:6}}>👤 プレイヤー1</div>
+      <input type="text" value={p1} onChange={e=>setP1(e.target.value.slice(0,10))} maxLength={10} style={{width:"100%",padding:8,background:"#060612",border:"2px solid #334",color:"#fff",fontSize:14,fontFamily:"'DotGothic16',monospace",outline:"none"}}/>
+    </div>
+    <div style={{padding:12,background:"#0c0c1a",border:"2px solid #223",marginBottom:10}}>
+      <div style={{fontSize:11,color:"#f9c",fontWeight:700,marginBottom:6}}>👤 プレイヤー2</div>
+      <input type="text" value={p2} onChange={e=>setP2(e.target.value.slice(0,10))} maxLength={10} style={{width:"100%",padding:8,background:"#060612",border:"2px solid #334",color:"#fff",fontSize:14,fontFamily:"'DotGothic16',monospace",outline:"none"}}/>
+    </div>
+    <div style={{padding:12,background:"#0c0c1a",border:"2px solid #223",marginBottom:10}}>
+      <div style={{fontSize:11,color:"#fc3",fontWeight:700,marginBottom:6}}>⚙️ ルール</div>
+      <div style={{display:"flex",gap:8,marginBottom:6,alignItems:"center"}}><span style={{fontSize:10,color:"#888",width:56}}>てふだ</span>{[6,8,10].map(n=><SBtn key={n} l={`${n}まい`} a={hl===n} co="#5cf" onClick={()=>setHl(n)}/>)}</div>
+      <div style={{display:"flex",gap:8,alignItems:"center"}}><span style={{fontSize:10,color:"#888",width:56}}>やま</span>{[40,50,60].map(n=><SBtn key={n} l={`${n}まい`} a={deckSize===n} co="#fc3" onClick={()=>setDeckSize(n)}/>)}</div>
+    </div>
+    {!ok&&<div style={{fontSize:10,color:"#f66",textAlign:"center",marginBottom:8}}>名前をちがう名前にしてね</div>}
+    <Btn onClick={()=>ok&&onStart({p1:p1.trim(),p2:p2.trim(),hl,deckSize})} disabled={!ok} bg="#6a1b9a" style={{width:"100%",padding:"14px",fontSize:16}}>⚔️ はじめる</Btn>
+    <button onClick={onBack} style={{width:"100%",marginTop:10,padding:"10px",border:"2px solid #334",background:"transparent",color:"#666",fontSize:13,fontWeight:700}}>← もどる</button>
+  </div></div>;
+};
+
+const TitleScreen=({onSelectStage,onEnding,onStartCpu,onStartVs,cleared,prologueDone,setPrologueDone,lang,setLang})=>{
   const[mode,setMode]=useState(null);const[selStage,setSelStage]=useState(null);const[bgmOn,setBgmOn]=useState(BGM.on());const[seOn,setSeOn]=useState(SE.isEnabled());
   if(!prologueDone) return <Prologue onDone={()=>setPrologueDone(true)}/>;
 
   const mainStages=STAGES.filter(s=>!s.ex);const exStages=STAGES.filter(s=>s.ex);const mainCleared=cleared.has(MAIN_CLEAR_ID);
 
-  // Settings screen
+  // CPU difficulty select
+  if(mode==="cpu") return <div style={{minHeight:"100dvh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:24,background:"linear-gradient(180deg,#080820,#0c0c30)",position:"relative"}}><Stars/><Scan/><div style={{position:"relative",zIndex:2,maxWidth:320,width:"100%"}}>
+    <div style={{textAlign:"center",marginBottom:18}}><div style={{fontSize:48,animation:"fl 3s ease-in-out infinite"}}>🤖</div><h2 style={{fontSize:18,fontWeight:900,color:"#fff",marginTop:6}}>CPUとあそぶ</h2><div style={{fontSize:10,color:"#888",marginTop:4}}>やまふだ50まい/てふだ8まい</div></div>
+    <div style={{display:"flex",flexDirection:"column",gap:10}}>
+      {[{k:"easy",n:"よわい",co:"#5f8",d:"ひくめのあいて"},{k:"normal",n:"ふつう",co:"#fc3",d:"バランスのいいあいて"},{k:"hard",n:"つよい",co:"#f44",d:"ベストをだすあいて"}].map(d=>
+        <Btn key={d.k} onClick={()=>onStartCpu(d.k)} bg={d.co==="#5f8"?"#2e7d32":d.co==="#fc3"?"#f57c00":"#c62828"} style={{width:"100%",padding:"14px",fontSize:15,textAlign:"left",display:"flex",flexDirection:"column",alignItems:"flex-start",gap:2}}><div>{d.k==="easy"?"★":d.k==="normal"?"★★":"★★★"} {d.n}</div><div style={{fontSize:10,opacity:.8,fontWeight:400}}>{d.d}</div></Btn>)}
+    </div>
+    <button onClick={()=>setMode(null)} style={{width:"100%",marginTop:16,padding:"10px",border:"2px solid #334",background:"transparent",color:"#666",fontSize:13,fontWeight:700}}>← もどる</button>
+  </div></div>;
+
+  // VS mode setup
+  if(mode==="vs") return <VsSetup onStart={onStartVs} onBack={()=>setMode(null)}/>;
+
+
   if(mode==="settings") return <div style={{minHeight:"100dvh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:24,background:"linear-gradient(180deg,#080820,#0c0c30)",position:"relative"}}><Stars/><Scan/><div style={{position:"relative",zIndex:2,maxWidth:320,width:"100%"}}>
     <h2 style={{fontSize:18,fontWeight:900,color:"#fff",textAlign:"center",marginBottom:20}}>⚙️ せってい</h2>
     <div style={{padding:14,background:"#0c0c1a",border:"2px solid #223",marginBottom:12}}><div style={{fontSize:12,color:"#888",fontWeight:700,marginBottom:8}}>🔤 もじ</div><div style={{display:"flex",gap:8,justifyContent:"center"}}><SBtn l="ひらがな" a={lang==="hiragana"} co="#5cf" onClick={()=>setLang("hiragana")}/><SBtn l="漢字" a={lang==="kanji"} co="#5cf" onClick={()=>setLang("kanji")}/></div></div>
@@ -104,6 +160,8 @@ const TitleScreen=({onSelectStage,onEnding,cleared,prologueDone,setPrologueDone,
       <div style={{fontSize:8,color:"#555",marginTop:8,marginBottom:24,fontFamily:"'Press Start 2P',monospace",animation:"pixelStar 2s ease-in-out infinite"}}>- PRESS START -</div>
       <div style={{display:"flex",flexDirection:"column",gap:10,width:"100%",maxWidth:260}}>
         <Btn onClick={()=>setMode("stages")} bg="#c62828" style={{width:"100%",padding:"14px",fontSize:16,display:"flex",alignItems:"center",gap:8,justifyContent:"center"}}><BossSprite id={1} size={28}/> ストーリー</Btn>
+        <Btn onClick={()=>setMode("cpu")} bg="#f57c00" style={{width:"100%",padding:"12px",fontSize:14,display:"flex",alignItems:"center",gap:8,justifyContent:"center"}}>🤖 CPUとあそぶ</Btn>
+        <Btn onClick={()=>setMode("vs")} bg="#6a1b9a" style={{width:"100%",padding:"12px",fontSize:14,display:"flex",alignItems:"center",gap:8,justifyContent:"center"}}>👥 みんなであそぶ</Btn>
         <Btn onClick={()=>setMode("settings")} bg="#334" style={{width:"100%",padding:"12px",fontSize:14}}>⚙️ せってい</Btn>
         <div style={{display:"flex",gap:6,width:"100%"}}>
           <button onClick={()=>onEnding(false)} style={{flex:1,padding:"6px",border:"1px solid #333",background:"transparent",color:"#555",fontSize:9}}>🌟 エンディング</button>
@@ -160,9 +218,9 @@ const TitleScreen=({onSelectStage,onEnding,cleared,prologueDone,setPrologueDone,
 /* ═══════════════════════════════════════════════════════════
    CardPhase (shared for story + CPU)
    ═══════════════════════════════════════════════════════════ */
-const CardPhase=({stage,onDone,cpuDiff})=>{
+const CardPhase=({stage,onDone,cpuDiff,vsPlayerName,vsPlayerColor})=>{
   const cn=useCN();const an=useAN();
-  const isCpu=!!cpuDiff;
+  const isCpu=!!cpuDiff;const isVs=!!vsPlayerName;
   const[deck,setDeck]=useState(()=>buildDeck(stage.deckSize));
   const[hand,setHand]=useState([]);const[cpuHand,setCpuHand]=useState([]);
   const[army,setArmy]=useState([]);const[cpuArmy,setCpuArmy]=useState([]);
@@ -170,7 +228,7 @@ const CardPhase=({stage,onDone,cpuDiff})=>{
   const[justFused,setJustFused]=useState(null);const[showList,setShowList]=useState(false);const[peeked,setPeeked]=useState(false);
   const[cpuMsg,setCpuMsg]=useState(null);const[turn,setTurn]=useState("player");
   const hl=stage.hl;const totalAtk=army.reduce((s,m)=>s+m.atk,0);const cpuAtk=cpuArmy.reduce((s,m)=>s+m.atk,0);
-  const canAttack=!isCpu&&totalAtk>=stage.bossHp;const deckEmpty=deck.length===0;
+  const canAttack=!isCpu&&!isVs&&totalAtk>=stage.bossHp;const deckEmpty=deck.length===0;
 
   useEffect(()=>{const d=[...deck],h=[],ch=[];for(let i=0;i<3;i++){if(d.length>0)h.push(d.pop());if(isCpu&&d.length>0)ch.push(d.pop());}setDeck(d);setHand(h);if(isCpu)setCpuHand(ch);},[]);
 
@@ -183,7 +241,7 @@ const CardPhase=({stage,onDone,cpuDiff})=>{
   const doFuse=()=>{if(!match)return;const mult=peeked?1:1.5;const boosted=mult>1?{...match,atk:Math.round(match.atk*mult),boosted:true}:match;const ids=new Set(sel);setHand(h=>h.filter(c=>!ids.has(c.id)));setArmy(a=>[...a,boosted]);setSel(new Set());setJustFused(boosted);SE.fuse(boosted.atk);setTimeout(()=>setJustFused(null),1500);};
   const doDiscard=cid=>{setHand(h=>h.filter(c=>c.id!==cid));SE.discard();};
   const doPass=()=>{SE.pass();setDrew(false);setDrawnC(null);if(isCpu){setTurn("cpu");setTimeout(()=>runCpu(),800);}};
-  const doFinish=()=>{if(isCpu){onDone({myArmy:army,cpuArmy});}else{onDone(army);}};
+  const doFinish=()=>{if(isCpu){onDone({myArmy:army,cpuArmy});}else if(isVs){onDone(army);}else{onDone(army);}};
 
   const runCpu=()=>{setDeck(pd=>{const nd=[...pd];if(!nd.length){setTimeout(()=>doFinish(),500);return nd;}const dr=nd.pop();setCpuHand(h=>{const nh=[...h,dr];setTimeout(()=>{const bond=cpuPickBond(nh,cpuDiff);if(bond){const ids=new Set(cpuPickCards(nh,bond));setCpuHand(ch=>ch.filter(c=>!ids.has(c.id)));setCpuArmy(a=>[...a,bond]);setCpuMsg({action:"bond",comp:bond});SE.fuse(bond.atk);}else{setCpuMsg({action:"pass"});SE.pass();}setTimeout(()=>{setCpuMsg(null);setTurn("player");setDrew(false);setDrawnC(null);if(!nd.length)setTimeout(()=>doFinish(),500);},1200);},600);return nh;});return nd;});};
 
@@ -194,20 +252,25 @@ const CardPhase=({stage,onDone,cpuDiff})=>{
     {/* Header */}
     <div style={{padding:"max(12px,env(safe-area-inset-top)) 14px 10px",display:"flex",justifyContent:"space-between",alignItems:"center",borderBottom:"1px solid #222",background:"rgba(8,8,32,.9)"}}>
       <div style={{display:"flex",alignItems:"center",gap:6}}>
-        {!isCpu&&<BossSprite id={stage.bossId} size={28}/>}
+        {!isCpu&&!isVs&&<BossSprite id={stage.bossId} size={28}/>}
         {isCpu&&<span style={{fontSize:20}}>🤖</span>}
-        <div><div style={{fontSize:11,fontWeight:900,color:isCpu?(turn==="player"?"#5cf":"#f93"):"#5cf"}}>{isCpu?(turn==="player"?"きみのターン":"CPU"):stage.name}</div>{!isCpu&&<div style={{fontSize:9,color:"#555"}}>vs {stage.bossName}</div>}</div>
+        {isVs&&<span style={{fontSize:20}}>👤</span>}
+        <div>
+          <div style={{fontSize:11,fontWeight:900,color:isVs?vsPlayerColor:(isCpu?(turn==="player"?"#5cf":"#f93"):"#5cf")}}>{isVs?vsPlayerName:(isCpu?(turn==="player"?"きみのターン":"CPU"):stage.name)}</div>
+          {!isCpu&&!isVs&&<div style={{fontSize:9,color:"#555"}}>vs {stage.bossName}</div>}
+          {isVs&&<div style={{fontSize:9,color:"#555"}}>じぶんのターン</div>}
+        </div>
       </div>
       <div style={{display:"flex",gap:10}}>
         <div style={{textAlign:"center"}}><div style={{fontSize:7,color:"#555"}}>やま</div><div style={{fontSize:14,fontWeight:900,color:deck.length>10?"#5cf":"#f44"}}>{deck.length}</div></div>
         <div style={{textAlign:"center"}}><div style={{fontSize:7,color:isCpu?"#5cf":"#555"}}>{isCpu?"きみ":"ATK"}</div><div style={{fontSize:14,fontWeight:900,color:canAttack?"#5f8":"#fc3"}}>{totalAtk}</div></div>
-        {isCpu?<div style={{textAlign:"center"}}><div style={{fontSize:7,color:"#f93"}}>CPU</div><div style={{fontSize:14,fontWeight:900,color:"#f44"}}>{cpuAtk}</div></div>:<div style={{textAlign:"center"}}><div style={{fontSize:7,color:"#555"}}>HP</div><div style={{fontSize:14,fontWeight:900,color:"#f44"}}>{stage.bossHp}</div></div>}
+        {isCpu?<div style={{textAlign:"center"}}><div style={{fontSize:7,color:"#f93"}}>CPU</div><div style={{fontSize:14,fontWeight:900,color:"#f44"}}>{cpuAtk}</div></div>:isVs?null:<div style={{textAlign:"center"}}><div style={{fontSize:7,color:"#555"}}>HP</div><div style={{fontSize:14,fontWeight:900,color:"#f44"}}>{stage.bossHp}</div></div>}
       </div>
     </div>
 
     {/* Armies */}
     {(army.length>0||cpuArmy.length>0)&&<div style={{padding:"4px 10px",background:"#0a0a18",borderBottom:"1px solid #181828",display:"flex",flexDirection:"column",gap:2}}>
-      {army.length>0&&<div style={{display:"flex",flexWrap:"wrap",gap:3,alignItems:"center"}}>{isCpu&&<span style={{fontSize:8,color:"#5cf",fontWeight:700}}>きみ:</span>}{army.map((m,i)=><MBadge key={`m${i}`} comp={m}/>)}</div>}
+      {army.length>0&&<div style={{display:"flex",flexWrap:"wrap",gap:3,alignItems:"center"}}>{isCpu&&<span style={{fontSize:8,color:"#5cf",fontWeight:700}}>きみ:</span>}{isVs&&<span style={{fontSize:8,color:vsPlayerColor,fontWeight:700}}>{vsPlayerName}:</span>}{army.map((m,i)=><MBadge key={`m${i}`} comp={m}/>)}</div>}
       {cpuArmy.length>0&&<div style={{display:"flex",flexWrap:"wrap",gap:3,alignItems:"center"}}><span style={{fontSize:8,color:"#f93",fontWeight:700}}>CPU:</span>{cpuArmy.map((m,i)=><MBadge key={`c${i}`} comp={m}/>)}</div>}
     </div>}
 
@@ -230,7 +293,7 @@ const CardPhase=({stage,onDone,cpuDiff})=>{
       </div>}
 
       {/* Boss target (story only) */}
-      {!isCpu&&<div style={{marginTop:10,padding:8,background:"#0c0c1a",border:"2px solid #223",textAlign:"center"}}>
+      {!isCpu&&!isVs&&<div style={{marginTop:10,padding:8,background:"#0c0c1a",border:"2px solid #223",textAlign:"center"}}>
         <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:6}}><BossSprite id={stage.bossId} size={28}/><span style={{fontSize:12,color:stage.bossColor,fontWeight:900}}>{stage.bossName}</span><span style={{fontSize:14,color:"#f44",fontWeight:900}}>HP{stage.bossHp}</span></div>
         <div style={{marginTop:4,fontSize:11,color:canAttack?"#5f8":"#fc3",fontWeight:700}}>ATK {totalAtk}/{stage.bossHp} {canAttack?"✓":"— がったい！"}</div>
       </div>}
@@ -247,9 +310,11 @@ const CardPhase=({stage,onDone,cpuDiff})=>{
     {/* Action bar */}
     {turn==="player"&&<div style={{padding:"10px 14px max(20px,env(safe-area-inset-bottom))",borderTop:"1px solid #222",display:"flex",gap:8,background:"rgba(8,8,32,.97)"}}>
       {canAttack&&<Btn onClick={doFinish} bg="#c62828" style={{flex:1,padding:14,fontSize:16,"--g":"rgba(255,50,50,.5)",animation:"pg 1.5s ease-in-out infinite"}}>⚔️ こうげき！</Btn>}
+      {isVs&&army.length>0&&<Btn onClick={doFinish} bg="#6a1b9a" style={{flex:1,padding:14,fontSize:14}}>✅ ターンおわり</Btn>}
       {!deckEmpty&&!drew&&<Btn onClick={doDraw} bg="#2244aa" style={{flex:1,padding:14,fontSize:canAttack?13:16}}>{canAttack?"🃏 もっとひく":"🃏 ひく"}</Btn>}
       {!deckEmpty&&drew&&!overLimit&&<Btn onClick={doPass} bg="#445566" style={{flex:1,padding:14,fontSize:13}}>{possible.length>0?"🔬 パス":"➡️ つぎへ"}</Btn>}
-      {deckEmpty&&!isCpu&&!canAttack&&<Btn onClick={doFinish} bg="#555" style={{flex:1,padding:14,fontSize:13}}>😢 バトルへ</Btn>}
+      {deckEmpty&&!isCpu&&!isVs&&!canAttack&&<Btn onClick={doFinish} bg="#555" style={{flex:1,padding:14,fontSize:13}}>😢 バトルへ</Btn>}
+      {deckEmpty&&isVs&&<Btn onClick={doFinish} bg="#6a1b9a" style={{flex:1,padding:14,fontSize:14}}>🏁 ターンおわり</Btn>}
       {deckEmpty&&isCpu&&<Btn onClick={doFinish} bg="#c62828" style={{flex:1,padding:14,fontSize:16}}>🏁 けっか！</Btn>}
     </div>}
   </div>;
@@ -300,20 +365,22 @@ const BattlePhase=({army,stage,onResult})=>{
 /* ═══════════════════════════════════════════════════════════
    CPU Result
    ═══════════════════════════════════════════════════════════ */
-const CpuResult=({myArmy,cpuArmy,onResult})=>{
+const CpuResult=({myArmy,cpuArmy,onResult,p1Name,p2Name,p1Color,p2Color})=>{
   const cn=useCN();const myAtk=myArmy.reduce((s,m)=>s+m.atk,0);const cpuAtk=cpuArmy.reduce((s,m)=>s+m.atk,0);const won=myAtk>cpuAtk;const tie=myAtk===cpuAtk;
+  const isVs=!!p1Name;const n1=p1Name||"きみ";const n2=p2Name||"CPU";const c1=p1Color||"#5cf";const c2=p2Color||"#f93";
+  const winnerName=won?n1:!tie?n2:null;
   useEffect(()=>{if(won)SE.victory();else if(!tie)SE.lose();},[]);
   return <div style={{minHeight:"100dvh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:24,background:"linear-gradient(180deg,#080820,#0c0c30)",position:"relative"}}><Stars/><Scan/>
     <div style={{position:"relative",zIndex:2,textAlign:"center",maxWidth:320,width:"100%"}}>
-      <div style={{fontSize:64,animation:"ca .5s ease both"}}>{won?"🏆":tie?"🤝":"😢"}</div>
-      <div style={{fontSize:20,fontWeight:900,color:won?"#fc3":tie?"#aaa":"#666",marginTop:8,fontFamily:"'Press Start 2P','DotGothic16',monospace"}}>{won?"勝利！":tie?"引き分け！":"敗北…"}</div>
+      <div style={{fontSize:64,animation:"ca .5s ease both"}}>{tie?"🤝":"🏆"}</div>
+      <div style={{fontSize:20,fontWeight:900,color:tie?"#aaa":"#fc3",marginTop:8,fontFamily:"'Press Start 2P','DotGothic16',monospace"}}>{tie?"ひきわけ！":isVs?`${winnerName} のかち！`:(won?"勝利！":"敗北…")}</div>
       <div style={{display:"flex",justifyContent:"center",gap:20,marginTop:16}}>
-        <div style={{textAlign:"center"}}><div style={{fontSize:11,color:"#5cf"}}>きみ</div><div style={{fontSize:28,fontWeight:900,color:won?"#5f8":"#888"}}>{myAtk}</div></div>
+        <div style={{textAlign:"center"}}><div style={{fontSize:11,color:c1}}>{n1}</div><div style={{fontSize:28,fontWeight:900,color:won?"#5f8":"#888"}}>{myAtk}</div></div>
         <div style={{fontSize:20,color:"#555",alignSelf:"center"}}>vs</div>
-        <div style={{textAlign:"center"}}><div style={{fontSize:11,color:"#f93"}}>CPU</div><div style={{fontSize:28,fontWeight:900,color:!won&&!tie?"#f44":"#888"}}>{cpuAtk}</div></div>
+        <div style={{textAlign:"center"}}><div style={{fontSize:11,color:c2}}>{n2}</div><div style={{fontSize:28,fontWeight:900,color:!won&&!tie?"#5f8":"#888"}}>{cpuAtk}</div></div>
       </div>
-      {myArmy.length>0&&<div style={{marginTop:12}}><div style={{fontSize:10,color:"#5cf",marginBottom:4}}>きみ</div><div style={{display:"flex",flexWrap:"wrap",gap:3,justifyContent:"center"}}>{myArmy.map((m,i)=><MBadge key={i} comp={m}/>)}</div></div>}
-      {cpuArmy.length>0&&<div style={{marginTop:8}}><div style={{fontSize:10,color:"#f93",marginBottom:4}}>CPU</div><div style={{display:"flex",flexWrap:"wrap",gap:3,justifyContent:"center"}}>{cpuArmy.map((m,i)=><MBadge key={i} comp={m}/>)}</div></div>}
+      {myArmy.length>0&&<div style={{marginTop:12}}><div style={{fontSize:10,color:c1,marginBottom:4}}>{n1}</div><div style={{display:"flex",flexWrap:"wrap",gap:3,justifyContent:"center"}}>{myArmy.map((m,i)=><MBadge key={i} comp={m}/>)}</div></div>}
+      {cpuArmy.length>0&&<div style={{marginTop:8}}><div style={{fontSize:10,color:c2,marginBottom:4}}>{n2}</div><div style={{display:"flex",flexWrap:"wrap",gap:3,justifyContent:"center"}}>{cpuArmy.map((m,i)=><MBadge key={i} comp={m}/>)}</div></div>}
       <div style={{display:"flex",flexDirection:"column",gap:8,marginTop:20}}>
         <Btn onClick={()=>onResult("retry")} bg="#e65100" style={{width:"100%",fontSize:14}}>🔄 もういちど</Btn>
         <Btn onClick={()=>onResult("home")} bg="#334" style={{width:"100%",fontSize:13}}>🏠 トップへ</Btn>
@@ -474,6 +541,7 @@ const NextBossPreview=({nextStage,onFight,onHome})=>{const[show,setShow]=useStat
    ═══════════════════════════════════════════════════════════ */
 window.__App=function App(){
   const[scr,setScr]=useState("title");const[stage,setStage]=useState(null);const[army,setArmy]=useState([]);const[cpuDiff,setCpuDiff]=useState(null);const[cpuArmies,setCpuArmies]=useState(null);const[nextStage,setNextStage]=useState(null);const[endingFinal,setEndingFinal]=useState(false);
+  const[vsState,setVsState]=useState(null);
   const[lang,setLang]=useState(()=>{try{return localStorage.getItem("acb_lang")||"hiragana";}catch(e){return "hiragana";}});
   const[cleared,setCleared]=useState(()=>{try{const s=localStorage.getItem("acb_cleared");return s?new Set(JSON.parse(s)):new Set();}catch(e){return new Set();}});
   const[prologueDone,setPrologueDone]=useState(()=>{try{return localStorage.getItem("acb_prologue")==="1";}catch(e){return false;}});
@@ -481,18 +549,34 @@ window.__App=function App(){
   const saveLang=l=>{setLang(l);try{localStorage.setItem("acb_lang",l);}catch(e){}};
   const saveCleared=c=>{setCleared(c);try{localStorage.setItem("acb_cleared",JSON.stringify([...c]));}catch(e){}};
   const savePrologue=()=>{setPrologueDone(true);try{localStorage.setItem("acb_prologue","1");}catch(e){}};
-  const goHome=()=>{setScr("title");if(BGM.on())BGM.start("title");};
+  const goHome=()=>{setScr("title");setVsState(null);setCpuDiff(null);if(BGM.on())BGM.start("title");};
 
-  const startStage=st=>{setStage(st);setArmy([]);setCpuDiff(null);setScr("card");if(BGM.on())BGM.start(st.diff==="hard"?"battle_hard":"battle");};
-  const startCpu=()=>{
-    // CPU uses a fake stage for card phase
-    const cpuStage={id:0,bossId:1,name:"CPU たいせん",hl:8,deckSize:50,diff:"normal",bossName:"CPU",bossEmoji:"🤖",bossHp:999,bossColor:"#f93",bossDesc:"",intro:"",win:"",winStory:"",lose:""};
-    setStage(cpuStage);setCpuDiff("normal");setArmy([]);setScr("card");if(BGM.on())BGM.start("battle");
+  const startStage=st=>{setStage(st);setArmy([]);setCpuDiff(null);setVsState(null);setScr("card");if(BGM.on())BGM.start(st.diff==="hard"?"battle_hard":"battle");};
+  const startCpu=(diff="normal")=>{
+    const hlByDiff={easy:10,normal:8,hard:7}[diff]||8;
+    const cpuStage={id:0,bossId:1,name:"CPU たいせん",hl:hlByDiff,deckSize:50,diff:"normal",bossName:"CPU",bossEmoji:"🤖",bossHp:999,bossColor:"#f93",bossDesc:"",intro:"",win:"",winStory:"",lose:""};
+    setStage(cpuStage);setCpuDiff(diff);setVsState(null);setArmy([]);setScr("card");if(BGM.on())BGM.start("battle");
+  };
+  const startVs=(config)=>{
+    // config: {p1, p2, hl, deckSize}
+    setVsState({...config,p1Color:"#5cf",p2Color:"#f9c",p1Army:null,p2Army:null,currentPlayer:1});
+    setCpuDiff(null);
+    setScr("vsPass1");
   };
 
   const onCardDone=result=>{
-    if(cpuDiff){setCpuArmies(result);setScr("cpuResult");}
-    else{setArmy(result);setScr("battle");}
+    if(cpuDiff){setCpuArmies(result);setScr("cpuResult");return;}
+    if(vsState){
+      if(vsState.currentPlayer===1){
+        setVsState(v=>({...v,p1Army:result,currentPlayer:2}));
+        setScr("vsPass2");
+      }else{
+        setVsState(v=>({...v,p2Army:result}));
+        setScr("vsResult");
+      }
+      return;
+    }
+    setArmy(result);setScr("battle");
   };
   const onBattleResult=(won,action)=>{
     if(won&&stage){const nc=new Set([...cleared,stage.id]);saveCleared(nc);}
@@ -501,14 +585,22 @@ window.__App=function App(){
     if(action==="retry"){startStage(stage);return;}
     goHome();
   };
-  const onCpuResult=action=>{if(action==="retry"){startCpu();return;}goHome();};
+  const onCpuResult=action=>{if(action==="retry"){startCpu(cpuDiff||"normal");return;}goHome();};
+  const onVsResult=action=>{if(action==="retry"&&vsState){startVs({p1:vsState.p1,p2:vsState.p2,hl:vsState.hl,deckSize:vsState.deckSize});return;}goHome();};
+
+  // VS用のfakeステージ
+  const vsStage=vsState?{id:0,bossId:1,name:"VS",hl:vsState.hl,deckSize:vsState.deckSize,diff:"normal",bossName:"VS",bossEmoji:"👥",bossHp:999,bossColor:"#6a1b9a",bossDesc:"",intro:"",win:"",winStory:"",lose:""}:null;
 
   return <LangCtx.Provider value={lang}><style>{CSS}</style><BgmBtn/>
-    {scr==="title"&&<TitleScreen onSelectStage={startStage} onEnding={(f)=>{setEndingFinal(f);setScr("ending");}} cleared={cleared} prologueDone={prologueDone} setPrologueDone={savePrologue} lang={lang} setLang={saveLang}/>}
+    {scr==="title"&&<TitleScreen onSelectStage={startStage} onStartCpu={startCpu} onStartVs={startVs} onEnding={(f)=>{setEndingFinal(f);setScr("ending");}} cleared={cleared} prologueDone={prologueDone} setPrologueDone={savePrologue} lang={lang} setLang={saveLang}/>}
     {scr==="card"&&stage&&<CardPhase stage={stage} onDone={onCardDone} cpuDiff={cpuDiff}/>}
     {scr==="battle"&&stage&&<BattlePhase army={army} stage={stage} onResult={onBattleResult}/>}
     {scr==="cpuResult"&&cpuArmies&&<CpuResult myArmy={cpuArmies.myArmy} cpuArmy={cpuArmies.cpuArmy} onResult={onCpuResult}/>}
     {scr==="nextPreview"&&nextStage&&<NextBossPreview nextStage={nextStage} onFight={()=>startStage(nextStage)} onHome={goHome}/>}
     {scr==="ending"&&<Ending isFinal={endingFinal} onHome={goHome}/>}
+    {scr==="vsPass1"&&vsState&&<PassScreen nextName={vsState.p1} nextColor={vsState.p1Color} message="さいしょのひとに スマホを わたしてね" onReady={()=>{if(BGM.on())BGM.start("battle");setScr("vsCard");}}/>}
+    {scr==="vsPass2"&&vsState&&<PassScreen nextName={vsState.p2} nextColor={vsState.p2Color} message="つぎのひとに スマホを わたしてね" onReady={()=>setScr("vsCard")}/>}
+    {scr==="vsCard"&&vsState&&vsStage&&<CardPhase key={`vs-${vsState.currentPlayer}`} stage={vsStage} onDone={onCardDone} vsPlayerName={vsState.currentPlayer===1?vsState.p1:vsState.p2} vsPlayerColor={vsState.currentPlayer===1?vsState.p1Color:vsState.p2Color}/>}
+    {scr==="vsResult"&&vsState&&<CpuResult myArmy={vsState.p1Army||[]} cpuArmy={vsState.p2Army||[]} onResult={onVsResult} p1Name={vsState.p1} p2Name={vsState.p2} p1Color={vsState.p1Color} p2Color={vsState.p2Color}/>}
   </LangCtx.Provider>;
 };
