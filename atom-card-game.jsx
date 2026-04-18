@@ -104,7 +104,10 @@ const TitleScreen=({onSelectStage,onEnding,cleared,prologueDone,setPrologueDone,
       <div style={{display:"flex",flexDirection:"column",gap:10,width:"100%",maxWidth:260}}>
         <Btn onClick={()=>setMode("stages")} bg="#c62828" style={{width:"100%",padding:"14px",fontSize:16,display:"flex",alignItems:"center",gap:8,justifyContent:"center"}}><BossSprite id={1} size={28}/> ストーリー</Btn>
         <Btn onClick={()=>setMode("settings")} bg="#334" style={{width:"100%",padding:"12px",fontSize:14}}>⚙️ せってい</Btn>
-        <button onClick={onEnding} style={{padding:"6px",border:"1px solid #222",background:"transparent",color:"#444",fontSize:9}}>🌟 エンディング</button>
+        <div style={{display:"flex",gap:6,width:"100%"}}>
+          <button onClick={()=>onEnding(false)} style={{flex:1,padding:"6px",border:"1px solid #333",background:"transparent",color:"#555",fontSize:9}}>🌟 エンディング</button>
+          <button onClick={()=>onEnding(true)} style={{flex:1,padding:"6px",border:"1px solid #c9f33",background:"transparent",color:"#c9f",fontSize:9}}>💎 TRUE END</button>
+        </div>
       </div>
       <div style={{marginTop:20,display:"flex",gap:6,opacity:.5}}>{[1,3,5,7,10].map(id=><div key={id} style={{animation:`fl ${2+id*.3}s ease-in-out infinite`}}><BossSprite id={id} size={28}/></div>)}</div>
     </div>
@@ -383,7 +386,7 @@ window.__App=function App(){
   const onCpuResult=action=>{if(action==="retry"){startCpu();return;}goHome();};
 
   return <LangCtx.Provider value={lang}><style>{CSS}</style><BgmBtn/>
-    {scr==="title"&&<TitleScreen onSelectStage={startStage} onEnding={()=>{setEndingFinal(false);setScr("ending");}} cleared={cleared} prologueDone={prologueDone} setPrologueDone={savePrologue} lang={lang} setLang={saveLang}/>}
+    {scr==="title"&&<TitleScreen onSelectStage={startStage} onEnding={(f)=>{setEndingFinal(f);setScr("ending");}} cleared={cleared} prologueDone={prologueDone} setPrologueDone={savePrologue} lang={lang} setLang={saveLang}/>}
     {scr==="card"&&stage&&<CardPhase stage={stage} onDone={onCardDone} cpuDiff={cpuDiff}/>}
     {scr==="battle"&&stage&&<BattlePhase army={army} stage={stage} onResult={onBattleResult}/>}
     {scr==="cpuResult"&&cpuArmies&&<CpuResult myArmy={cpuArmies.myArmy} cpuArmy={cpuArmies.cpuArmy} onResult={onCpuResult}/>}
