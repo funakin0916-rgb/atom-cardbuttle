@@ -225,7 +225,7 @@ const CardPhase=({stage,onDone,cpuDiff,vsPlayerName,vsPlayerColor})=>{
   const[hand,setHand]=useState([]);const[cpuHand,setCpuHand]=useState([]);
   const[army,setArmy]=useState([]);const[cpuArmy,setCpuArmy]=useState([]);
   const[sel,setSel]=useState(new Set());const[drew,setDrew]=useState(false);const[drawnC,setDrawnC]=useState(null);
-  const[justFused,setJustFused]=useState(null);const[showList,setShowList]=useState(false);const[peeked,setPeeked]=useState(false);
+  const[justFused,setJustFused]=useState(null);const[showList,setShowList]=useState(false);const[showOther,setShowOther]=useState(false);const[peeked,setPeeked]=useState(false);
   const[cpuMsg,setCpuMsg]=useState(null);const[turn,setTurn]=useState("player");
   const hl=stage.hl;const totalAtk=army.reduce((s,m)=>s+m.atk,0);const cpuAtk=cpuArmy.reduce((s,m)=>s+m.atk,0);
   const canAttack=!isCpu&&!isVs&&totalAtk>=stage.bossHp;const deckEmpty=deck.length===0;
@@ -299,11 +299,84 @@ const CardPhase=({stage,onDone,cpuDiff,vsPlayerName,vsPlayerColor})=>{
       </div>}
 
       {/* List toggle */}
-      <div style={{marginTop:6}}><button onClick={()=>{const next=!showList;setShowList(next);if(next)setPeeked(true);SE.tap();}} style={{width:"100%",padding:8,border:"2px solid #223",background:"#0e0e1e",color:"#555",fontSize:11,fontWeight:700}}>📋 {showList?"とじる":"リスト"}{!peeked&&<span style={{color:"#fc3",marginLeft:4,fontSize:9}}>※×1.5消滅</span>}</button>
-        {showList&&<div style={{marginTop:4,padding:8,background:"#0c0c1a",border:"2px solid #222",maxHeight:250,overflowY:"auto",animation:"su .2s ease"}}>
-          {possible.length>0&&<div style={{marginBottom:6}}><div style={{fontSize:10,color:"#5f8",fontWeight:900,marginBottom:3}}>🟢 いまつくれる</div>{possible.map(c=><div key={c.k} style={{padding:"4px 6px",marginBottom:2,background:"rgba(80,255,128,.03)",border:"1px solid rgba(80,255,128,.1)",display:"flex",alignItems:"center",gap:6}}>{COMP_PIXELS[c.k]?<CompSprite k={c.k} size={24}/>:<span style={{fontSize:14}}>{c.emoji}</span>}<span style={{fontSize:10,fontWeight:900,color:"#5f8",flex:1}}>{cn(c)} <span style={{color:"#666",fontSize:8}}>{c.f}</span></span><span style={{fontSize:10,fontWeight:900,color:"#000",background:"#5f8",padding:"1px 4px"}}>{c.atk}</span></div>)}</div>}
-          {[...COMPOUNDS].sort((a,b)=>a.atk-b.atk).map(c=>{const ok=Object.entries(c.a).every(([s,n])=>(hc[s]||0)>=n);return <div key={c.k} style={{padding:"3px 4px",marginBottom:2,background:ok?"rgba(80,255,128,.03)":"#0a0a14",border:ok?"1px solid rgba(80,255,128,.1)":"1px solid #181828",display:"flex",alignItems:"center",gap:4,opacity:ok?1:.5}}><span style={{fontSize:9}}>{c.emoji}</span><span style={{fontSize:9,fontWeight:700,color:ok?"#5f8":"#888",flex:1}}>{cn(c)} <span style={{color:"#555",fontSize:7}}>{c.f}</span></span><span style={{fontSize:8,fontWeight:900,color:ok?"#000":"#555",background:ok?"#5f8":"#222",padding:"1px 4px"}}>{c.atk}</span></div>;})}
-        </div>}
+      <div style={{marginTop:6}}>
+        <button onClick={()=>{const next=!showList;setShowList(next);if(next)setPeeked(true);SE.tap();}} style={{width:"100%",padding:10,border:"2px solid #223",background:"#0e0e1e",color:"#555",fontSize:12,fontWeight:700}}>📋 {showList?"リストをとじる":"がったいリストを見る"}{!peeked&&<span style={{color:"#fc3",marginLeft:6,fontSize:10}}>※見ると×1.5消滅</span>}</button>
+        {showList&&(()=>{
+          const analyzed=COMPOUNDS.map(c=>{
+            const reqs=Object.entries(c.a).map(([s,n])=>({s,need:n,have:hc[s]||0,ok:(hc[s]||0)>=n}));
+            const missing=reqs.reduce((sum,r)=>sum+Math.max(0,r.need-r.have),0);
+            return {c,reqs,missing,canMake:missing===0};
+          });
+          const readyList=analyzed.filter(a=>a.canMake).sort((a,b)=>b.c.atk-a.c.atk);
+          const almostList=analyzed.filter(a=>!a.canMake&&a.missing===1).sort((a,b)=>b.c.atk-a.c.atk);
+          const otherList=analyzed.filter(a=>!a.canMake&&a.missing>=2).sort((a,b)=>a.c.atk-b.c.atk);
+
+          // 原子バッジ: 原子ごとの色を使用、達成なら✓、未達なら「持/必要」
+          const atomBadge=(r,idx)=>{
+            const ac=getA(r.s);
+            return <span key={idx} style={{fontSize:11,padding:"2px 6px",fontWeight:900,color:r.ok?ac.color:"#fc3",background:r.ok?ac.color+"1a":"rgba(255,200,50,.1)",border:`2px solid ${r.ok?ac.color+"66":"#fc3"}`}}>{r.s}×{r.need} <span style={{fontSize:10,opacity:.85}}>{r.ok?`✓`:`${r.have}/${r.need}`}</span></span>;
+          };
+
+          // 「いますぐつくれる」用の大きめ行
+          const readyRow=a=><div key={a.c.k} style={{padding:"10px 12px",marginBottom:5,background:"rgba(80,255,128,.08)",border:"2px solid rgba(80,255,128,.4)",display:"flex",alignItems:"center",gap:10}}>
+            <div style={{width:40,height:40,flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center"}}>{COMP_PIXELS[a.c.k]?<CompSprite k={a.c.k} size={38}/>:<span style={{fontSize:28}}>{a.c.emoji}</span>}</div>
+            <div style={{flex:1,minWidth:0}}>
+              <div style={{fontSize:14,fontWeight:900,color:"#5f8",lineHeight:1.2}}>{cn(a.c)}</div>
+              <div style={{fontSize:10,color:"#888",marginTop:1}}>{a.c.f}</div>
+              <div style={{display:"flex",flexWrap:"wrap",gap:4,marginTop:4}}>{a.reqs.map(atomBadge)}</div>
+            </div>
+            <div style={{fontSize:18,fontWeight:900,color:"#000",background:a.c.atk>=20?"#ff5722":a.c.atk>=10?"#f93":"#5f8",padding:"4px 10px",flexShrink:0,minWidth:36,textAlign:"center"}}>{a.c.atk}</div>
+          </div>;
+
+          // 「あと少し」用（原子バッジで何が足りないか明確に）
+          const almostRow=a=>{
+            const missingAtoms=a.reqs.filter(r=>!r.ok);
+            return <div key={a.c.k} style={{padding:"8px 10px",marginBottom:4,background:"rgba(255,200,50,.05)",border:"2px solid rgba(255,200,50,.3)",display:"flex",alignItems:"center",gap:10}}>
+              <div style={{width:32,height:32,flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center"}}>{COMP_PIXELS[a.c.k]?<CompSprite k={a.c.k} size={30}/>:<span style={{fontSize:22}}>{a.c.emoji}</span>}</div>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{fontSize:13,fontWeight:900,color:"#fc3",lineHeight:1.2}}>{cn(a.c)} <span style={{fontSize:10,color:"#888",fontWeight:700}}>{a.c.f}</span></div>
+                <div style={{display:"flex",flexWrap:"wrap",gap:4,marginTop:4}}>{a.reqs.map(atomBadge)}</div>
+              </div>
+              <div style={{textAlign:"center",flexShrink:0}}>
+                <div style={{fontSize:10,color:"#f93",fontWeight:900,padding:"1px 6px",border:"1px solid #f93",marginBottom:2}}>あと{missingAtoms.map(r=>`${r.s}×${r.need-r.have}`).join(",")}</div>
+                <div style={{fontSize:15,fontWeight:900,color:"#000",background:a.c.atk>=20?"#ff5722":a.c.atk>=10?"#f93":"#fc3",padding:"2px 8px",textAlign:"center"}}>{a.c.atk}</div>
+              </div>
+            </div>;
+          };
+
+          // 「そのほか」用（コンパクト）
+          const otherRow=a=>{
+            const missingAtoms=a.reqs.filter(r=>!r.ok);
+            return <div key={a.c.k} style={{padding:"6px 8px",marginBottom:2,background:"#0a0a14",border:"1px solid #181828",display:"flex",alignItems:"center",gap:8,opacity:.8}}>
+              <div style={{width:28,height:28,flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center"}}>{COMP_PIXELS[a.c.k]?<CompSprite k={a.c.k} size={26}/>:<span style={{fontSize:18}}>{a.c.emoji}</span>}</div>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{fontSize:12,fontWeight:800,color:"#aaa",lineHeight:1.2}}>{cn(a.c)} <span style={{fontSize:9,color:"#666",fontWeight:700}}>{a.c.f}</span></div>
+                <div style={{display:"flex",flexWrap:"wrap",gap:3,marginTop:3}}>{a.reqs.map((r,idx)=>{const ac=getA(r.s);return <span key={idx} style={{fontSize:10,padding:"1px 4px",fontWeight:900,color:r.ok?ac.color:"#777",background:r.ok?ac.color+"15":"#161625",border:`1px solid ${r.ok?ac.color+"44":"#222"}`}}>{r.s}×{r.need} <span style={{fontSize:9,opacity:.8}}>{r.ok?`✓`:`${r.have}/${r.need}`}</span></span>;})}</div>
+              </div>
+              <div style={{fontSize:13,fontWeight:900,color:"#555",background:"#222",padding:"2px 6px",flexShrink:0,minWidth:32,textAlign:"center"}}>{a.c.atk}</div>
+            </div>;
+          };
+
+          return <div style={{marginTop:4,background:"#0c0c1a",border:"2px solid #222",maxHeight:420,overflowY:"auto",animation:"su .2s ease"}}>
+            {readyList.length>0&&<div style={{padding:10,background:"rgba(80,255,128,.04)",borderBottom:"2px solid rgba(80,255,128,.2)"}}>
+              <div style={{fontSize:13,color:"#5f8",fontWeight:900,marginBottom:8,padding:"4px 8px",background:"rgba(80,255,128,.08)",border:"1px solid rgba(80,255,128,.2)"}}>🟢 いますぐつくれる（{readyList.length}しゅるい）</div>
+              {readyList.map(readyRow)}
+            </div>}
+            {readyList.length===0&&<div style={{padding:"12px 10px",fontSize:11,color:"#666",textAlign:"center",borderBottom:"1px solid #222"}}>まだ合体できる組み合わせがないよ</div>}
+
+            {almostList.length>0&&<div style={{padding:10,borderBottom:"1px solid #222"}}>
+              <div style={{fontSize:13,color:"#fc3",fontWeight:900,marginBottom:6,padding:"4px 8px",background:"rgba(255,200,50,.06)",border:"1px solid rgba(255,200,50,.2)"}}>🎯 あとすこし（{almostList.length}しゅるい）</div>
+              {almostList.map(almostRow)}
+            </div>}
+
+            <div style={{padding:10}}>
+              <button onClick={()=>{setShowOther(v=>!v);SE.tap();}} style={{width:"100%",padding:8,background:"#0e0e1e",border:"1px solid #223",color:"#888",fontSize:12,fontWeight:700,textAlign:"left",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                <span>📖 そのほか（{otherList.length}しゅるい）</span><span>{showOther?"▲":"▼"}</span>
+              </button>
+              {showOther&&<div style={{marginTop:6}}>{otherList.map(otherRow)}</div>}
+            </div>
+          </div>;
+        })()}
       </div>
     </div>
 
